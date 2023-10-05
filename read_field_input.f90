@@ -23,7 +23,6 @@ SUBROUTINE Read_Input(nmoltypes, molnames, nmols, natoms, charges, rmax, L, whic
         READ(10,*) (molnames(i), i=1, nmoltypes) ! molecule names
         READ(10,*)
         READ(10,*) (nmols(i), i=1, nmoltypes) ! number of mols
-        READ(10,*)
     CLOSE(10)
 
     DO i=1, nmoltypes
