@@ -36,7 +36,9 @@ PROGRAM Field
         ! field that we are going to calculate. 
         ! Note: for each molecule, need a foo.in file, where "foo" is the molecule name.
         ! This opens all the field files as well - close them at the end.
-    CALL Read_Input(nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_wat)
+    CALL Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_wat)
+    write(*,*) "There are ", nmoltypes, " molecule types"
+    WRITE(*,*) "There are ", nconfig, " configurations"
 
     max_mol = 0; max_natom = 0
 

@@ -1,4 +1,4 @@
-SUBROUTINE Read_Input(nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_water)
+SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_water)
     IMPLICIT NONE
 
     ! Output Variables
