@@ -122,7 +122,7 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
                 ! Reading rule for not water
                 DO i=1, nmols(type)
                     DO jatom=1, natoms(i)
-                        read(11,*) ctmp, (rmol(i,jatom,k,z), k=1,3)
+                        read(11,*) ctmp, (rmol(type,i,jatom,k,z), k=1,3)
                         ! Make the molecule whole
                         IF (jatom > 1) THEN
                             DO k=1, 3
