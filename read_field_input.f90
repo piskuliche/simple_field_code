@@ -94,7 +94,7 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     IMPLICIT NONE
     INTEGER, INTENT(IN) :: nconfig, nmoltypes, nmols(:), natoms(:), which_is_wat
     REAL, DIMENSION(3), INTENT(IN) :: L
-    REAL, INTENT(INOUT) :: rO(:,:,:), r1(:,:,:), r2(:,:,:), rmol(:,:,:,:)
+    REAL, INTENT(INOUT) :: rO(:,:,:), r1(:,:,:), r2(:,:,:), rmol(:,:,:,:,:)
     INTEGER :: i, k, z, type, jatom
     CHARACTER(LEN=10) :: ctmp
 
@@ -120,14 +120,14 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
                 ENDDO ! i
             ELSE ! (type == which_is_wat)
                 ! Reading rule for not water
-                DO i=1, nmols(i)
+                DO i=1, nmols(type)
                     DO jatom=1, natoms(i)
                         read(11,*) ctmp, (rmol(i,jatom,k,z), k=1,3)
                         ! Make the molecule whole
                         IF (jatom > 1) THEN
                             DO k=1, 3
-                                rmol(i,jatom,k,z) = rmol(i,jatom,k,z) &
-                                & - L(k)*anint((rmol(i,jatom,k,z)-rmol(i,1,k,z))/L(k))
+                                rmol(type,i,jatom,k,z) = rmol(type,i,jatom,k,z) &
+                                & - L(k)*anint((rmol(type,i,jatom,k,z)-rmol(type,i,1,k,z))/L(k))
                             ENDDO ! k
                         END IF ! (jatom > 1)
                     END DO !jatom
