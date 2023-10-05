@@ -78,7 +78,7 @@ PROGRAM Field
 
     ! Opens the trajectory file and reads the coordinates of the molecules
     ! It also makes the molecules whole along the way.
-    Call Read_Trajectory(nconfig, nmols, natoms, which_is_wat, rO, r1, r2, rmol) 
+    Call Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol) 
 
     CALL cpu_time(tmp2)
     WRITE(6,'(A,F10.2,A)') ' Read time = ',tmp2-tmp1,' s'
