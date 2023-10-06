@@ -33,6 +33,8 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
         END IF
     ENDDO
 
+    WRITE(*,*) "nm2", nmols(1)
+
 END SUBROUTINE Read_Input
 
 SUBROUTINE Read_Molecule(imol, molname, q, natoms)
