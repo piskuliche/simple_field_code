@@ -19,7 +19,6 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
         READ(10,*) rmax, L(1), L(2), L(3)
         READ(10,*)
         IF (nmoltypes > 10) STOP 'Too many molecule types'
-        READ(10,*)
         READ(10,*) (molnames(i), i=1, nmoltypes) ! molecule names
         READ(10,*)
         READ(10,*) (nmols(i), i=1, nmoltypes) ! number of mols
