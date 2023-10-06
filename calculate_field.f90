@@ -87,7 +87,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         dist1 = 0.0
                         DO k=1, 3
                             rtmp1(k) = r2(p,k,z) - L(k)*anint((r2(p,k,z)-r1(imol,k,z))/L(k))
-                            dist1 = dist1 + (r2(imol,k,z) - rtmp1(k))**2
+                            dist1 = dist1 + (r1(imol,k,z) - rtmp1(k))**2
                         ENDDO
                         dist1 = Sqrt(dist1)
                         DO k=1,3
