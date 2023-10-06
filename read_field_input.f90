@@ -7,7 +7,7 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
 
     INTEGER :: i
     INTEGER :: nmoltypes, nconfig, which_is_water, nwater
-    INTEGER, DIMENSION(10) :: nmols, natoms
+    INTEGER, DIMENSION(10), INTENT(INOUT) :: nmols, natoms
     REAL, DIMENSION(10, 2000) :: charges
     CHARACTER(LEN=10), DIMENSION(10) :: molnames
     
