@@ -40,8 +40,6 @@ PROGRAM Field
     write(*,*) "There are ", nmoltypes, " molecule types"
     WRITE(*,*) "There are ", nconfig, " configurations"
 
-    WRITE(*,*) "fnm1", nmols(1)
-
     max_mol = 0; max_natom = 0
 
     ! I.B: Allocate Arrays ********************************************************
@@ -67,6 +65,8 @@ PROGRAM Field
     ALLOCATE(eOH1(nmols(which_is_wat),3,nconfig))
     ALLOCATE(eOH2(nmols(which_is_wat),3,nconfig))
     dot1=0d0; dot2=0d0; eOH1=0d0; eOH2=0d0
+
+    WRITE(*,*) "wat", nmols(which_is_wat)
 
     ! I.C: Setup Field Files *****************************************************
         ! Open the field files and write the header
