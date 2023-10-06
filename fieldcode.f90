@@ -40,6 +40,8 @@ PROGRAM Field
     write(*,*) "There are ", nmoltypes, " molecule types"
     WRITE(*,*) "There are ", nconfig, " configurations"
 
+    WRITE(*,*) "fnm1", nmols(1)
+
     max_mol = 0; max_natom = 0
 
     ! I.B: Allocate Arrays ********************************************************
