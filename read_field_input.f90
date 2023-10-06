@@ -11,7 +11,7 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
     REAL, DIMENSION(10, 2000) :: charges
     CHARACTER(LEN=10), DIMENSION(10) :: molnames
 
-    nmols = 0
+    nmols = 0; natoms = 0
     
     ! Read the field input file
     OPEN(10, file='field_input.in', status='old')
@@ -44,8 +44,6 @@ SUBROUTINE Read_Molecule(imol, molname, q, natoms)
     REAL, DIMENSION(2000) :: q
 
     INTEGER :: i, ifile
-
-    natoms = 0
 
     ifile = imol + 10
 
