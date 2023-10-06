@@ -101,6 +101,8 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     INTEGER :: i, k, z, type, jatom
     CHARACTER(LEN=10) :: ctmp
 
+    WRITE(*,*) shape(rO), 'shape2'
+
     WRITE(*,*) 'Trajectory Calls'
     WRITE(*,*) 'nconfig', nconfig
     WRITE(*,*) 'nmoltypes', nmoltypes
