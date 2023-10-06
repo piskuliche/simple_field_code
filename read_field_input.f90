@@ -104,6 +104,7 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     OPEN(11, file='../traj.xyz', status='old')
 
     DO z=1, nconfig
+        WRITE(*,*) "Reading configuration", z
         DO i=1,2
             read(11,*) 
         END DO
