@@ -96,7 +96,8 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     INTEGER, INTENT(IN) :: nconfig, nmoltypes, which_is_wat
     INTEGER, DIMENSION(10), INTENT(IN) :: nmols, natoms
     REAL, DIMENSION(3), INTENT(IN) :: L
-    REAL, INTENT(INOUT) :: rO(:,:,:), r1(:,:,:), r2(:,:,:), rmol(:,:,:,:,:)
+    REAL, DIMENSION(:,:,:), INTENT(INOUT) :: rO, r1, r2
+    REAL, DIMENSION(:,:,:,:,:), INTENT(INOUT) :: rmol
     INTEGER :: i, k, z, type, jatom
     CHARACTER(LEN=10) :: ctmp
 
