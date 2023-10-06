@@ -97,7 +97,12 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     INTEGER :: i, k, z, type, jatom
     CHARACTER(LEN=10) :: ctmp
 
-    WRITE(*,*) nmols(1), "t"
+    WRITE(*,*) 'Trajectory Calls'
+    WRITE(*,*) 'nconfig', nconfig
+    WRITE(*,*) 'nmoltypes', nmoltypes
+    WRITE(*,*) 'nmols', nmols
+    WRITE(*,*) 'natoms', natoms
+    WRITE(*,*) 'which_is_wat', which_is_wat
 
     OPEN(11, file='../traj.xyz', status='old')
 
