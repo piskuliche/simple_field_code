@@ -91,7 +91,8 @@ END SUBROUTINE Close_Field_Files
 
 SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol)
     IMPLICIT NONE
-    INTEGER, INTENT(IN) :: nconfig, nmoltypes, nmols(:), natoms(:), which_is_wat
+    INTEGER, INTENT(IN) :: nconfig, nmoltypes, which_is_wat
+    INTEGER, DIMENSION(:), INTENT(IN) :: nmols, natoms
     REAL, DIMENSION(3), INTENT(IN) :: L
     REAL, INTENT(INOUT) :: rO(:,:,:), r1(:,:,:), r2(:,:,:), rmol(:,:,:,:,:)
     INTEGER :: i, k, z, type, jatom
