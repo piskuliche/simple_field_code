@@ -109,6 +109,7 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
         END DO
 
         DO type=1, nmoltypes
+            WRITE(*,*) "start", z, nmols(type), natoms(type)
             IF (type == which_is_wat) THEN
                 DO i=1, nmols(type)
                     ! Reading rule for water
