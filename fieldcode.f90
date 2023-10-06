@@ -82,6 +82,7 @@ PROGRAM Field
     ! It also makes the molecules whole along the way.
     WRITE(*,*) nmols(1), "field"
     WRITE(*,*) Size(rO), "size"
+    WRITE(*,*) Shape(rO), "shape"
     Call Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol) 
 
     CALL cpu_time(tmp2)
