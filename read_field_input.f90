@@ -24,16 +24,12 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
         READ(10,*) (nmols(i), i=1, nmoltypes) ! number of mols
     CLOSE(10)
 
-    WRITE(*,*) "nm1", nmols(1)
-
     DO i=1, nmoltypes
         CALL Read_Molecule(i, molnames(i), charges(i,:), natoms(i))
         IF ( i == which_is_water) THEN
             nwater = nmols(i)
         END IF
     ENDDO
-
-    WRITE(*,*) "nm2", nmols(1)
 
 END SUBROUTINE Read_Input
 
@@ -101,6 +97,8 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     INTEGER :: i, k, z, type, jatom
     CHARACTER(LEN=10) :: ctmp
 
+    WRITE(*,*) nmols(1), "t"
+
     OPEN(11, file='../traj.xyz', status='old')
 
     DO z=1, nconfig
@@ -109,8 +107,6 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
         END DO
 
         DO type=1, nmoltypes
-            WRITE(*,*) "type", type
-            WRITE(*,*) "nmols", nmols(type)
             IF (type == which_is_wat) THEN
                 DO i=1, nmols(type)
                     ! Reading rule for water
