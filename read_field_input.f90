@@ -24,6 +24,8 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
         READ(10,*) (nmols(i), i=1, nmoltypes) ! number of mols
     CLOSE(10)
 
+    WRITE(*,*) "nm1", nmols(1)
+
     DO i=1, nmoltypes
         CALL Read_Molecule(i, molnames(i), charges(i,:), natoms(i))
         IF ( i == which_is_water) THEN
@@ -105,8 +107,8 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
         END DO
 
         DO type=1, nmoltypes
-            WRITE(*,*) type
-            WRITE(*,*) nmols(type)
+            WRITE(*,*) "type", type
+            WRITE(*,*) "nmols", nmols(type)
             IF (type == which_is_wat) THEN
                 DO i=1, nmols(type)
                     ! Reading rule for water
