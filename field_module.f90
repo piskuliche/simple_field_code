@@ -8,7 +8,7 @@ MODULE field_module
         contribution = q * (r1 - r2) / dist**3
     END FUNCTION E_Cont
 
-    include read_field_input.f90
-    include calculate_field.f90
+    include 'read_field_input.f90'
+    include 'calculate_field.f90'
 
 END MODULE

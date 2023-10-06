@@ -1,5 +1,5 @@
 PROGRAM Field
-    
+    use field_module
     IMPLICIT None
 
     ! Variables
