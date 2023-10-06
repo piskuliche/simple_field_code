@@ -2,7 +2,6 @@
 
 SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                     & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
-    use field_module
     IMPLICIT NONE
 
     ! Input variables
