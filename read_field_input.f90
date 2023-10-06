@@ -104,13 +104,11 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     OPEN(11, file='../traj.xyz', status='old')
 
     DO z=1, nconfig
-        WRITE(*,*) "Reading configuration", z
         DO i=1,2
             read(11,*) 
         END DO
 
         DO type=1, nmoltypes
-            WRITE(*,*) "start", z, nmols(type), natoms(type)
             IF (type == which_is_wat) THEN
                 DO i=1, nmols(type)
                     ! Reading rule for water
@@ -127,7 +125,6 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
                 ! Reading rule for not water
                 DO i=1, nmols(type)
                     DO jatom=1, natoms(type)
-                        WRITE(*,*) z, type, i, jatom
                         read(11,*) ctmp, (rmol(type,i,jatom,k,z), k=1,3)
                         ! Make the molecule whole
                         IF (jatom > 1) THEN
