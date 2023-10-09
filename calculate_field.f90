@@ -133,7 +133,6 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                 DO p=1, nmols(type)
                 DO jatom=1, natoms(type)
                     ratom = rmol(type, p, jatom, :, z)
-                    
                     ! Contribution of atom on H1 of imol
                     dist1 = 0.0
                     do k=1,3 

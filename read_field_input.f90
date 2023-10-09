@@ -67,7 +67,7 @@ SUBROUTINE Open_Field_Files(nwater)
 
     ! Field File extensions
     DO i =1, 2*nwater
-        write(ext(i), '(I0.4)') i+100
+        write(ext(i), '(I0.5)') i+100
     ENDDO
 
     ! Open Field Files
