@@ -63,7 +63,7 @@ SUBROUTINE Open_Field_Files(nwater)
     INTEGER, INTENT(IN) :: nwater
 
     INTEGER ifile, i
-    CHARACTER(LEN=4), DIMENSION(2*nwater) :: ext
+    CHARACTER(LEN=5), DIMENSION(2*nwater) :: ext
 
     ! Field File extensions
     DO i =1, 2*nwater
