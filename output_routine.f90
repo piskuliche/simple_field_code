@@ -33,8 +33,8 @@ DO i=1, nmol
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot1(i,:), ERROR_FLAG)
 
-    CALL h5dclose_f(dataset_id)
-    CALL h5sclose_f(dataspace_id)
+    CALL h5dclose_f(dataset_id, ERROR_FLAG)
+    CALL h5sclose_f(dataspace_id, ERROR_FLAG)
 
     !   eoh value
     CALL h5screate_simple(1, [3, nconfig], dataspace_id, ERROR_FLAG)
@@ -42,8 +42,8 @@ DO i=1, nmol
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh1(i,:,:), ERROR_FLAG)
 
-    CALL h5dclose_f(dataset_id)
-    CALL h5sclose_f(dataspace_id)
+    CALL h5dclose_f(dataset_id, ERROR_FLAG)
+    CALL h5sclose_f(dataspace_id, ERROR_FLAG)
 
     ! Write Second OH 
     !   dot product value
@@ -52,16 +52,16 @@ DO i=1, nmol
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot2(i,:), ERROR_FLAG)
 
-    CALL h5dclose_f(dataset_id)
-    CALL h5sclose_f(dataspace_id)
+    CALL h5dclose_f(dataset_id, ERROR_FLAG)
+    CALL h5sclose_f(dataspace_id, ERROR_FLAG)
     !   eoh value
     CALL h5screate_simple(1, [3, nconfig], dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+1
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh2(i,:,:), ERROR_FLAG)
 
-    CALL h5dclose_f(dataset_id)
-    CALL h5sclose_f(dataspace_id)
+    CALL h5dclose_f(dataset_id, ERROR_FLAG)
+    CALL h5sclose_f(dataspace_id, ERROR_FLAG)
 END DO
 
 
