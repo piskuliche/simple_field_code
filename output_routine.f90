@@ -30,8 +30,8 @@ DO i=1, nmol
     !   dot product value
     CALL h5screate_simple(1, [nconfig], dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "dot_", (i-1)*2+1
-    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL_F, dataspace_id, dataset_id, ERROR_FLAG)
-    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL_F, dot1(i,:), ERROR_FLAG)
+    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot1(i,:),[nconfig], ERROR_FLAG)
 
     CALL h5dclose_f(dataset_id, ERROR_FLAG)
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
@@ -39,8 +39,8 @@ DO i=1, nmol
     !   eoh value
     CALL h5screate_simple(1, [3, nconfig], dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+1
-    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL_F, dataspace_id, dataset_id, ERROR_FLAG)
-    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL_F, eoh1(i,:,:), ERROR_FLAG)
+    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh1(i,:,:),[3,nconfig], ERROR_FLAG)
 
     CALL h5dclose_f(dataset_id, ERROR_FLAG)
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
@@ -49,16 +49,16 @@ DO i=1, nmol
     !   dot product value
     CALL h5screate_simple(1, [nconfig], dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "dot_", (i-1)*2+2
-    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL_F, dataspace_id, dataset_id, ERROR_FLAG)
-    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL_F, dot2(i,:), ERROR_FLAG)
+    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot2(i,:), [nconfig], ERROR_FLAG)
 
     CALL h5dclose_f(dataset_id, ERROR_FLAG)
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
     !   eoh value
     CALL h5screate_simple(1, [3, nconfig], dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+1
-    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL_F, dataspace_id, dataset_id, ERROR_FLAG)
-    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL_F, eoh2(i,:,:), ERROR_FLAG)
+    CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh2(i,:,:), [3,nconfig], ERROR_FLAG)
 
     CALL h5dclose_f(dataset_id, ERROR_FLAG)
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
