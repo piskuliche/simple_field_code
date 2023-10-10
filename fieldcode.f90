@@ -94,6 +94,7 @@ PROGRAM Field
 
     Call Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
         & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+    write(*,*) dot1(1,1),"t"
     
     CALL cpu_time(tmp2)
     WRITE(6,'(A,F10.2,A)') ' Efield time = ',tmp2-tmp1,' s'

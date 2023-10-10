@@ -177,9 +177,10 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             dot1(imol,z) = Dot_Product(eOH1(imol,:,z), efield1(imol,:,z))
             dot2(imol,z) = Dot_Product(eOH2(imol,:,z), efield2(imol,:,z))
             IF (imol == 1 .and. z == 1) THEN
-                WRITE(*,*) dot1(imol,z)
+                WRITE(*,*) dot1(imol,z), imol, z
             ENDIF
         ENDDO !imol
     ENDDO ! z
     !$OMP END PARALLEL DO
+    WRITE(*,*) dot1(1,1)
 END SUBROUTINE
