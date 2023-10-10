@@ -15,7 +15,7 @@ CHARACTER(LEN=8), PARAMETER :: filename = "field.h5"    ! File name
 INTEGER(HID_T) :: file_id                               ! File identifier
 INTEGER :: ERROR_FLAG! Error flag
 
-INTEGER :: dataspace_id, dataset_id
+INTEGER(HID_T) :: dataspace_id, dataset_id
 CHARACTER(LEN=20) :: dataset_name
 
 ! Initialize FORTRAN interface
