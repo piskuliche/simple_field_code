@@ -112,6 +112,8 @@ PROGRAM Field
     write(*,*) dot1(1,1),"t"
     CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig)
 
+    CALL Read_Field(1)
+
 
 ! V. Deallocate ***************************************************************
 
