@@ -17,8 +17,11 @@ INTEGER :: ERROR_FLAG! Error flag
 
 INTEGER(HID_T) :: dataspace_id, dataset_id
 CHARACTER(LEN=20) :: dataset_name
-INTEGER(HSIZE_T), DIMENSION(1) :: dot_dims = (/nconfig/)
-INTEGER(HSIZE_T), DIMENSION(2) :: eoh_dims = (/3, nconfig/)
+INTEGER(HSIZE_T), DIMENSION(1) :: dot_dims 
+INTEGER(HSIZE_T), DIMENSION(2) :: eoh_dims 
+
+dot_dims = (/nconfig/)
+eoh_dims = (/3, nconfig/)
 
 ! Initialize FORTRAN interface
 
