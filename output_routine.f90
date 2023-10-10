@@ -41,7 +41,7 @@ DO i=1, nmol
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
 
     !   eoh value
-    CALL h5screate_simple_f(1, eoh_dims, dataspace_id, ERROR_FLAG)
+    CALL h5screate_simple_f(2, eoh_dims, dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+1
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh1(i,:,:), eoh_dims, ERROR_FLAG)
@@ -60,7 +60,7 @@ DO i=1, nmol
     CALL h5dclose_f(dataset_id, ERROR_FLAG)
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
     !   eoh value
-    CALL h5screate_simple_f(1, eoh_dims, dataspace_id, ERROR_FLAG)
+    CALL h5screate_simple_f(2, eoh_dims, dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+2
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh2(i,:,:), eoh_dims, ERROR_FLAG)
