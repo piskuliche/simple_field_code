@@ -10,5 +10,6 @@ MODULE field_module
 
     include 'read_field_input.f90'
     include 'calculate_field.f90'
+    include 'output_routine.f90
 
 END MODULE
