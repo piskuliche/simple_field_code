@@ -44,6 +44,6 @@ SUBROUTINE read_field(ioh)
     ! Close the library
     CALL h5close_f(ERROR_FLAG)
 
-    WRITE(*,*) "Read value," etmp(1)
+    WRITE(*,*) "Read value", etmp(1)
 
 END SUBROUTINE read_field
