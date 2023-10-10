@@ -36,7 +36,7 @@ DO i=1, nmol
     !   dot product value
     CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "dot_", (i-1)*2+1
-    
+    WRITE(*,*) "Error flag value: ", ERROR_FLAG
     
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot1(i,:), dot_dims, ERROR_FLAG)
