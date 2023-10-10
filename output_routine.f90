@@ -31,25 +31,19 @@ CALL h5fcreate_f(filename, H5F_ACC_TRUNC_F, file_id, ERROR_FLAG)
 
 ! Loop over water
 DO i=1, nmol
-    WRITE(*,*) "Writing molecule ", i
     ! Write first OH
     !   dot product value
     CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "dot_", (i-1)*2+1
-    WRITE(*,*) "Writing dataset ", trim(dataset_name)
-    WRITE(*,*) "Error flag value1: ", ERROR_FLAG
     
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
-    WRITE(*,*) "Error flag value2: ", ERROR_FLAG
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot1(i,:), dot_dims, ERROR_FLAG)
-    WRITE(*,*) "Error flag value3: ", ERROR_FLAG
     CALL h5dclose_f(dataset_id, ERROR_FLAG)
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
 
     !   eoh value
     CALL h5screate_simple_f(1, eoh_dims, dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+1
-    WRITE(*,*) "Writing dataset ", trim(dataset_name)
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh1(i,:,:), eoh_dims, ERROR_FLAG)
 
@@ -61,7 +55,6 @@ DO i=1, nmol
     !   dot product value
     CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "dot_", (i-1)*2+2
-    WRITE(*,*) "Writing dataset ", trim(dataset_name)
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot2(i,:), dot_dims, ERROR_FLAG)
 
@@ -70,7 +63,6 @@ DO i=1, nmol
     !   eoh value
     CALL h5screate_simple_f(1, eoh_dims, dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+2
-    WRITE(*,*) "Writing dataset ", trim(dataset_name)
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
     CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, eoh2(i,:,:), eoh_dims, ERROR_FLAG)
 
