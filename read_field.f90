@@ -5,9 +5,9 @@ SUBROUTINE read_field(ioh)
     INTEGER :: ioh, j, k
     REAL, DIMENSION(2000) :: etmp
     DOUBLE PRECISION ::  muprime, x01tmp, x12tmp
-    DOUBLE PRECISION, DIMENSION(ntimes) :: w01, w12
-    DOUBLE PRECISION, DIMENSION(ntimes) :: mu01, mu12
-    DOUBLE PRECISION, DIMENSION(ntimes,3) :: eoh
+    !DOUBLE PRECISION, DIMENSION(ntimes) :: w01, w12
+    !DOUBLE PRECISION, DIMENSION(ntimes) :: mu01, mu12
+    !DOUBLE PRECISION, DIMENSION(ntimes,3) :: eoh
     
     ! HDF5 Variables
     CHARACTER(len=8), PARAMETER :: filename = 'field.h5'
