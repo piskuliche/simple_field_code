@@ -30,7 +30,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     efield1 = 0.0; efield2 = 0.0
     !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(DYNAMIC), &
     !$OMP SHARED( rO, r1, r2, rmol, charges), & 
-    !$OMP SHARED(eOH1, eOH2, efield1, efield2)
+    !$OMP SHARED(eOH1, eOH2, efield1, efield2), &
+    !$OMP SHARED(dot1, dot2)
     DO z=1, nconfig
         ! Loop over the water molecules to get the electric field
         DO imol=1, nmols(which_is_wat)
