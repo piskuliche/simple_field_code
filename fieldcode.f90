@@ -108,6 +108,7 @@ PROGRAM Field
     !        WRITE(2*imol+100,'(4F13.7)') dot2(imol,z), eOH2(imol,1,z), eOH2(imol,2,z), eOH2(imol,3,z)
     !    ENDDO
     !ENDDO
+    write(*,*) dot1(1,1),"t"
     CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig)
 
 
