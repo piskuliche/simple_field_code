@@ -182,5 +182,5 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
         ENDDO !imol
     ENDDO ! z
     !$OMP END PARALLEL DO
-    WRITE(*,*) dot1(1,1)
+    WRITE(*,*) dot1(1,1), "m"
 END SUBROUTINE
