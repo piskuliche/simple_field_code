@@ -17,6 +17,8 @@ INTEGER :: ERROR_FLAG! Error flag
 
 INTEGER(HID_T) :: dataspace_id, dataset_id
 CHARACTER(LEN=20) :: dataset_name
+INTEGER(HSIZE_T), DIMENSION(1) :: dot_dims = (/nconfig/)
+INTEGER(HSIZE_T), DIMENSION(2) :: eoh_dims = (/3, nconfig/)
 
 ! Initialize FORTRAN interface
 
@@ -31,7 +33,7 @@ DO i=1, nmol
     CALL h5screate_simple(1, [nconfig], dataspace_id, ERROR_FLAG)
     WRITE(dataset_name, '(A, I0)') "dot_", (i-1)*2+1
     CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
-    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot1(i,:),[nconfig], [nconfig], ERROR_FLAG)
+    CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot1(i,:), dot_dims, ERROR_FLAG)
 
     CALL h5dclose_f(dataset_id, ERROR_FLAG)
     CALL h5sclose_f(dataspace_id, ERROR_FLAG)
