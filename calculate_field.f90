@@ -23,15 +23,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     REAL, DIMENSION(3) :: rtmp1o, rtmp2o, rtmp1, rtmp2, ratom
 
     REAL :: angperau
+    
 
-    INTEGER :: max_omp_threads, num_threads
-
-    CALL OMP_GET_MAX_THREADS(max_omp_threads)
-    WRITE(*,*) "There are a maximum of ", max_omp_threads, " threads"
-    ! Get the number of OpenMP threads
-    CALL OMP_GET_NUM_THREADS(num_threads)
-    ! Print the number of threads
-    WRITE(*,*) "Number of OpenMP threads: ", num_threads
 
     ! Convert Units
     angperau = 0.52917721092d0
@@ -42,10 +35,6 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     !$OMP SHARED(eOH1, eOH2, efield1, efield2), &
     !$OMP SHARED(dot1, dot2)
     DO z=1, nconfig
-        CALL OMP_GET_NUM_THREADS(num_threads)
-        WRITE(*,*) "Number of OpenMP threads: ", num_threads, z
-        CALL OMP_GET_MAX_THREADS(max_omp_threads)
-        WRITE(*,*) "There are a maximum of ", max_omp_threads, z, " threads"
         ! Loop over the water molecules to get the electric field
         DO imol=1, nmols(which_is_wat)
             ! Get OH vector
