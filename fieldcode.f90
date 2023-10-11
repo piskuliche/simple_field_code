@@ -39,7 +39,7 @@ PROGRAM Field
     CALL Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_wat)
     write(*,*) "There are ", nmoltypes, " molecule types"
     WRITE(*,*) "There are ", nconfig, " configurations"
-    WRITE(*,*) "There are a maximum of ," OMP_GET_MAX_THREADS(), " threads"
+    WRITE(*,*) "There are a maximum of ", OMP_GET_MAX_THREADS(), " threads"
 
     max_mol = 0; max_natom = 0
 
