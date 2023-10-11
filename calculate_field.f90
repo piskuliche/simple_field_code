@@ -29,7 +29,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     CALL OMP_GET_MAX_THREADS(max_omp_threads)
     WRITE(*,*) "There are a maximum of ", max_omp_threads, " threads"
     ! Get the number of OpenMP threads
-    num_threads = OMP_GET_NUM_THREADS()
+    CALL OMP_GET_NUM_THREADS(num_threads)
     ! Print the number of threads
     WRITE(*,*) "Number of OpenMP threads: ", num_threads
 
