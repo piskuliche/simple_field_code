@@ -74,7 +74,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         ! Add field contribution from O
                         DO k=1,3
                             efield1(imol,k,z) = efield1(imol,k,z) &
-                            & + E_Cont(charges(type,1), r1(imol,k,z), rtmp1o(k), dist1o)
+                            & + charges(type,1) * (r1(imol,k,z) - rtmp1o(k))/(dist1o**3)
+                            !& + E_Cont(charges(type,1), r1(imol,k,z), rtmp1o(k), dist1o)
                         ENDDO
 
                         ! Add field contribution from H1
@@ -86,7 +87,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         dist1 = Sqrt(dist1)
                         DO k=1,3
                             efield1(imol,k,z) = efield1(imol,k,z) &
-                            & + E_Cont(charges(type,2), r1(imol,k,z), rtmp1(k), dist1)
+                            & + charges(type,2) * (r1(imol,k,z) - rtmp1(k))/(dist1**3)
+                            !& + E_Cont(charges(type,2), r1(imol,k,z), rtmp1(k), dist1)
                         ENDDO
                         
                         ! Add field contribution from H2
@@ -98,7 +100,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         dist1 = Sqrt(dist1)
                         DO k=1,3
                             efield1(imol,k,z) = efield1(imol,k,z) &
-                            & + E_Cont(charges(type,3), r1(imol,k,z), rtmp1(k), dist1)
+                            & + charges(type,3) * (r1(imol,k,z) - rtmp1(k))/(dist1**3)
+                            !& + E_Cont(charges(type,3), r1(imol,k,z), rtmp1(k), dist1)
                         ENDDO
                     ENDIF ! (dist1o .le. rmax)
 
@@ -106,7 +109,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         ! Add field contribution from O
                         DO k=1,3
                             efield2(imol,k,z) = efield2(imol,k,z) &
-                            & + E_Cont(charges(type,1), r2(imol,k,z), rtmp2o(k), dist2o)
+                            & + charges(type,1) * (r2(imol,k,z) - rtmp2o(k))/(dist2o**3)
+                            !& + E_Cont(charges(type,1), r2(imol,k,z), rtmp2o(k), dist2o)
                         ENDDO
 
                         ! Add field contribution from H1
@@ -118,7 +122,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         dist2 = Sqrt(dist2)
                         DO k=1,3
                             efield2(imol,k,z) = efield2(imol,k,z) &
-                            & + E_Cont(charges(type,2), r2(imol,k,z), rtmp2(k), dist2)
+                            & + charges(type,2) * (r2(imol,k,z) - rtmp2(k))/(dist2**3)
+                            !& + E_Cont(charges(type,2), r2(imol,k,z), rtmp2(k), dist2)
                         ENDDO
                         
                         ! Add field contribution from H2
@@ -130,7 +135,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         dist2 = Sqrt(dist2)
                         DO k=1,3
                             efield2(imol,k,z) = efield2(imol,k,z) &
-                            & + E_Cont(charges(type,3), r2(imol,k,z), rtmp2(k), dist2)
+                            & + charges(type,3) * (r2(imol,k,z) - rtmp2(k))/(dist2**3)
+                            !& + E_Cont(charges(type,3), r2(imol,k,z), rtmp2(k), dist2)
                         ENDDO
                     ENDIF ! (dist1o .le. rmax)
                 ENDDO ! p
@@ -149,7 +155,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                     IF (dist1 .le. rmax) THEN
                         DO k=1,3
                             efield1(imol,k,z) = efield1(imol,k,z) &
-                            & + E_Cont(charges(type,jatom), r1(imol,k,z), rtmp1(k), dist1)
+                            & + charges(type,jatom) * (r1(imol,k,z) - rtmp1(k))/(dist1**3)
+                            !& + E_Cont(charges(type,jatom), r1(imol,k,z), rtmp1(k), dist1)
                         ENDDO
                     ENDIF ! (dist1 .le. rmax)
 
@@ -163,7 +170,9 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                     IF (dist2 .le. rmax) THEN
                         DO k=1,3
                             efield2(imol,k,z) = efield2(imol,k,z) &
-                            & + E_Cont(charges(type,jatom), r2(imol,k,z), rtmp2(k), dist2)
+                            & + charges(type,jatom) * (r2(imol,k,z) - rtmp2(k))/(dist2**3)
+                            !& + E_Cont(charges(type,jatom), r2(imol,k,z), rtmp2(k), dist2)
+                            
                         ENDDO
                     ENDIF ! (dist1 .le. rmax)
                 ENDDO ! jatom
