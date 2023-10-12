@@ -199,7 +199,7 @@ SUBROUTINE OH_Vector(ra, rb, eOH)
 
     eOH = 0.0
     DO k=1,3
-        eOH(k) = rb(k) - ra(k)
+        eOH(k) = ra(k) - rb(k)
         norm = norm + eOH(k)**2
     ENDDO ! k
     norm = SQRT(norm)
