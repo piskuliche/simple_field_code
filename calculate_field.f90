@@ -32,13 +32,12 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
     !efield1 = 0.0; efield2 = 0.0
     eOH1 = 0.0; eOH2 = 0.0
-
+    !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
+    !$OMP SHARED( rO, r1, r2, rmol, charges), & 
+    !$OMP SHARED(eOH1, eOH2), &
+    !$OMP SHARED(dot1, dot2)
     DO z=1, nconfig
         ! Loop over the water molecules to get the electric field
-        !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
-        !$OMP SHARED( rO, r1, r2, rmol, charges), & 
-        !$OMP SHARED(eOH1, eOH2), &
-        !$OMP SHARED(dot1, dot2)
         DO imol=1, nmols(which_is_wat)
 
             eOH1_tmp = 0.0; eOH2_tmp = 0.0
@@ -196,7 +195,6 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             dot1(imol,z) = Dot_Product(eOH1(imol,:,z), ef1_tmp(:))
             dot2(imol,z) = Dot_Product(eOH2(imol,:,z), ef2_tmp(:))
         ENDDO !imol
-        !$OMP END PARALLEL DO
     ENDDO ! z
-
+    !$OMP END PARALLEL DO
 END SUBROUTINE
