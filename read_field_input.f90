@@ -1,4 +1,4 @@
-SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_water)
+SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_water, nsamples)
     IMPLICIT NONE
 
     ! Output Variables
@@ -8,6 +8,7 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
     INTEGER :: i
     INTEGER :: nmoltypes, nconfig, which_is_water, nwater
     INTEGER, DIMENSION(10), INTENT(INOUT) :: nmols, natoms
+    INTEGER, INTENT(OUT) :: nsamples
     REAL, DIMENSION(10, 2000) :: charges
     CHARACTER(LEN=10), DIMENSION(10) :: molnames
 
@@ -24,7 +25,14 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
         READ(10,*) (molnames(i), i=1, nmoltypes) ! molecule names
         READ(10,*)
         READ(10,*) (nmols(i), i=1, nmoltypes) ! number of mols
+        READ(10,*) 
+        READ(10,*) nsamples
     CLOSE(10)
+
+    IF (nsamples > nmols(which_is_water)) THEN
+        WRITE(*,*) 'Error: nsamples > nwater'
+        STOP 'Too many samples'
+    END IF
 
     DO i=1, nmoltypes
         CALL Read_Molecule(i, molnames(i), charges(i,:), natoms(i))
@@ -141,3 +149,30 @@ SUBROUTINE Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, r
     CLOSE(11)
 
 END SUBROUTINE Read_Trajectory
+
+SUBROUTINE Read_Samples(nsamples, samples)
+! ************************************************************************************
+! This subroutine reads the samples.in file
+! It contains the indices of the water molecules to be used for the calculation
+! This is a cost saving tool for dealing with the expense of very big systems.
+! In:
+!  -nsamples: number of samples
+! Out:
+!  -samples: array of indices of the water molecules to be used for the calculation
+! ************************************************************************************
+    IMPLICIT NONE
+
+    INTEGER, INTENT(IN) :: nsamples
+    INTEGER, DIMENSION(:), INTENT(OUT) :: samples
+
+    INTEGER :: i
+
+    OPEN(15, file="samples.in", status='old')
+
+    DO i=1, nsamples
+        READ(15,*) samples(i)
+    END DO
+
+    CLOSE(15)
+
+END SUBROUTINE

@@ -14,6 +14,8 @@ PROGRAM Field
     CHARACTER(LEN=10), DIMENSION(10) :: molnames ! Molecule names
     REAL :: rmax            ! Cutoff radius
     REAL, DIMENSION(3) :: L ! Box length
+    INTEGER :: nsamples
+    REAL, ALLOCATABLE, DIMENSION(:) samples ! Samples for field calculation
     REAL, ALLOCATABLE, DIMENSION(:,:,:) :: rO, r1, r2 ! Water coordinate arrays
     REAL, ALLOCATABLE, DIMENSION(:,:,:,:,:) :: rmol ! Molecular coordinate arrays
 
@@ -39,9 +41,15 @@ PROGRAM Field
         ! field that we are going to calculate. 
         ! Note: for each molecule, need a foo.in file, where "foo" is the molecule name.
         ! This opens all the field files as well - close them at the end.
-    CALL Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_wat)
+    CALL Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_wat, nsamples)
     write(*,*) "There are ", nmoltypes, " molecule types"
     WRITE(*,*) "There are ", nconfig, " configurations"
+
+    ! Check if using sampling
+    IF (nsamples > 0) THEN 
+        ALLOCATE(samples(nsamples))
+        CALL Read_Samples(nsamples, samples)
+    END IF
 
 
     max_mol = 0; max_natom = 0
@@ -96,8 +104,15 @@ PROGRAM Field
     CALL cpu_time(tmp1)
     CALL flush(6)
 
-    Call Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
-        & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+    ! Check if using sampling or not. Eventually just build samples to be its own array.
+    IF (nsamples > 0) THEN
+        Call Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, samples, &
+            & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+    ELSE
+        Call Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
+            & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+    END IF
+
     write(*,*) dot1(1,1),"t"
     
     CALL cpu_time(tmp2)
@@ -107,14 +122,12 @@ PROGRAM Field
 ! IV. Write Data ************************************************************
 
     WRITE(6,*) ' nwat = ', nmols(which_is_wat)
-    !DO z = 1, nconfig
-    !    DO imol = 1, nmols(which_is_wat)
-    !        WRITE(2*imol+99,'(4F13.7)') dot1(imol,z), eOH1(imol,1,z), eOH1(imol,2,z), eOH1(imol,3,z)
-    !        WRITE(2*imol+100,'(4F13.7)') dot2(imol,z), eOH2(imol,1,z), eOH2(imol,2,z), eOH2(imol,3,z)
-    !    ENDDO
-    !ENDDO
     write(*,*) dot1(1,1),"t"
-    CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig)
+    IF (nsamples > 0) THEN
+        CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig, nsamples, samples)
+    ELSE
+        CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig)
+    ENDIF 
 
 
 ! V. Deallocate ***************************************************************
