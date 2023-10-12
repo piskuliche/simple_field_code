@@ -15,7 +15,7 @@ PROGRAM Field
     REAL :: rmax            ! Cutoff radius
     REAL, DIMENSION(3) :: L ! Box length
     INTEGER :: nsamples
-    REAL, ALLOCATABLE, DIMENSION(:) :: samples ! Samples for field calculation
+    INTEGER, ALLOCATABLE, DIMENSION(:) :: samples ! Samples for field calculation
     REAL, ALLOCATABLE, DIMENSION(:,:,:) :: rO, r1, r2 ! Water coordinate arrays
     REAL, ALLOCATABLE, DIMENSION(:,:,:,:,:) :: rmol ! Molecular coordinate arrays
 
@@ -124,7 +124,7 @@ PROGRAM Field
     WRITE(6,*) ' nwat = ', nmols(which_is_wat)
     write(*,*) dot1(1,1),"t"
     IF (nsamples > 0) THEN
-        CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig, nsamples, samples)
+        CALL WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig, nsamples, samples)
     ELSE
         CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig)
     ENDIF 
