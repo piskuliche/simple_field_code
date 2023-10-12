@@ -52,14 +52,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                 DO p=1, nmols(type)
                     IF (p .eq. imol) CYCLE ! Don't calculate if same mol
                     ! Check oxygen distances
-                    dist1o = 0.0; dist2o = 0.0
-                    DO k=1, 3
-                        rtmp1o(k) = rO(p,k,z) - L(k)*anint((rO(p,k,z)-r1(imol,k,z))/L(k))
-                        rtmp2o(k) = rO(p,k,z) - L(k)*anint((rO(p,k,z)-r2(imol,k,z))/L(k))
-                        dist1o = dist1o + (r1(imol,k,z) - rtmp1o(k))**2
-                        dist2o = dist2o + (r2(imol,k,z) - rtmp2o(k))**2
-                    ENDDO
-                    dist1o = Sqrt(dist1o); dist2o = Sqrt(dist2o)
+                    CALL PBC_DIST(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
+                    CALL PBC_DIST(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
 
                     ! Chekc if the O -> h(imol) distance is less than rmax
                     IF (dist1o .le. rmax) THEN
@@ -208,3 +202,23 @@ SUBROUTINE OH_Vector(ra, rb, eOH)
     ENDDO ! k
 
 END SUBROUTINE OH_Vector
+
+SUBROUTINE PBC_Dist(ra, rb, L, dist, vector)
+
+    IMPLICIT NONE
+
+    REAL, DIMENSION(3), INTENT(IN) :: ra, rb, L
+    REAL, INTENT(OUT) :: dist
+    REAL, DIMENSION(3), INTENT(OUT) :: vector
+
+    INTEGER :: k
+
+    dist =0.0
+
+    DO k=1,3
+        vector(k) = ra(k) - L(k)*ANINT((ra(k)-rb(k))/L(k))
+        dist = dist + (rb(k) - vector(k))**2
+    ENDDO
+    dist = SQRT(dist)
+
+END SUBROUTINE PBC_DIST
