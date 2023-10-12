@@ -15,7 +15,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     REAL, DIMENSION(:,:,:) :: eOH1, eOH2
     REAL, DIMENSION(3) :: eOH1_tmp, eOH2_tmp, ef1_tmp, ef2_tmp
 
-    REAL, DIMENSION(nmols(which_is_wat),3,nconfig) :: efield1, efield2
+    !REAL, DIMENSION(nmols(which_is_wat),3,nconfig) :: efield1, efield2
 
     INTEGER imol, k, z, p, type, jatom
 
@@ -30,8 +30,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     ! Convert Units
     angperau = 0.52917721092d0
 
-    efield1 = 0.0; efield2 = 0.0
-    !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(DYNAMIC), &
+    !efield1 = 0.0; efield2 = 0.0
+    !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
     !$OMP SHARED( rO, r1, r2, rmol, charges), & 
     !$OMP SHARED(eOH1, eOH2), &
     !$OMP SHARED(dot1, dot2)
