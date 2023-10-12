@@ -41,9 +41,10 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
         DO imol=1, nmols(which_is_wat)
 
             ! Get the OH vectors for the water molecule
-            CALL OH_Vector(r1(imol,:,z),rO(imol,:,z),eOH1(imol,:,z))
-            CALL OH_Vector(r2(imol,:,z),rO(imol,:,z),eOH2(imol,:,z))
-            
+            !CALL OH_Vector(r1(imol,:,z),rO(imol,:,z),eOH1(imol,:,z))
+            !CALL OH_Vector(r2(imol,:,z),rO(imol,:,z),eOH2(imol,:,z))
+            eOH1(imol,:,z)=1
+            eOH2(imol,:,z)=1
             ef1_tmp = 0.0; ef2_tmp = 0.0
             ! Calculate the field contribution...
             DO type=1, nmoltypes
