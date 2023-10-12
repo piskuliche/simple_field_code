@@ -13,7 +13,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     ! Output variables
     REAL, DIMENSION(:,:) :: dot1, dot2
     REAL, DIMENSION(:,:,:) :: eOH1, eOH2
-    REAL, DIMENSION(3) :: eOH1_tmp, eOH2_tmp, ef1_tmp, ef2_tmp
+    REAL, DIMENSION(3) :: ef1_tmp, ef2_tmp
 
     !REAL, DIMENSION(nmols(which_is_wat),3,nconfig) :: efield1, efield2
 
@@ -40,22 +40,9 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
         ! Loop over the water molecules to get the electric field
         DO imol=1, nmols(which_is_wat)
 
-            eOH1_tmp = 0.0; eOH2_tmp = 0.0
-            ! Get OH vector
-            norm1 = 0.0; norm2 = 0.0
-            DO k=1, 3
-                eOH2_tmp(k) = r2(imol,k,z) - rO(imol,k,z)
-                eOH1_tmp(k) = r1(imol,k,z) - rO(imol,k,z)
-                norm1 = norm1 + eOH1_tmp(k)**2
-                norm2 = norm2 + eOH2_tmp(k)**2
-            ENDDO ! k
-            norm1 = SQRT(norm1); norm2 = SQRT(norm2)
-
-            ! Normalize the vectors
-            DO k=1,3
-                eOH1(imol,k,z) = eOH1_tmp(k) / norm1
-                eOH2(imol,k,z) = eOH2_tmp(k) / norm2
-            ENDDO ! k
+            ! Get the OH vectors for the water molecule
+            CALL OH_Vector(r1(imol,:,z),rO(imol,:,z),eOH1(imol,:,z))
+            CALL OH_Vector(r2(imol,:,z),rO(imol,:,z),eOH2(imol,:,z))
             
             ef1_tmp = 0.0; ef2_tmp = 0.0
             ! Calculate the field contribution...
@@ -177,6 +164,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                             ef2_tmp(k) = ef2_tmp(k) &
                             & + charges(type,jatom) * (r2(imol,k,z) - rtmp2(k))/(dist2**3)
                             !& + E_Cont(charges(type,jatom), r2(imol,k,z), rtmp2(k), dist2)
+                            
                         ENDDO
                     ENDIF ! (dist1 .le. rmax)
                 ENDDO ! jatom
@@ -198,3 +186,24 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     ENDDO ! z
     !$OMP END PARALLEL DO
 END SUBROUTINE
+
+SUBROUTINE OH_Vector(ra, rb, eOH)
+
+    IMPLICIT NONE
+
+    REAL, DIMENSION(3), INTENT(IN) :: ra, rb
+    REAL, DIMENSION(3), INTENT(OUT) :: eOH
+
+    REAL :: norm
+
+    eOH = 0.0
+    DO k=1,3
+        eOH(k) = rb(k) - ra(k)
+        norm = norm + eOH(k)**2
+    ENDDO ! k
+    norm = SQRT(norm)
+    DO k=1,3
+        eOH(k) = eOH(k) / norm
+    ENDDO ! k
+
+END SUBROUTINE OH_Vector
