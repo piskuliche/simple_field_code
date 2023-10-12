@@ -93,7 +93,6 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                         CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
                         IF (z == 1 .and. imol ==1) WRITE(*,*) dist2, "r2r2", ef2_tmp(1)
 
-                        WRITE(*,*) "This should trigger", ef2_tmp(1)
                         IF (.NOT. ieee_is_finite(ef2_tmp(1))) THEN
                             WRITE(*,*) "ef2_tmp not finite"
                             WRITE(*,*) dist2o, "r2r2", ef2_tmp(1)
