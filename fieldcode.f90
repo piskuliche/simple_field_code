@@ -28,7 +28,7 @@ PROGRAM Field
     REAL, ALLOCATABLE, DIMENSION(:,:,:) :: eOH1, eOH2
 
     ! Openmp
-    INTEGER :: max_omp_threads
+    INTEGER :: max_omp_threads, threadno
 
 ! I. Setup *******************************************************************
 
@@ -42,8 +42,7 @@ PROGRAM Field
     CALL Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_wat)
     write(*,*) "There are ", nmoltypes, " molecule types"
     WRITE(*,*) "There are ", nconfig, " configurations"
-    CALL OMP_GET_MAX_THREADS(max_omp_threads)
-    WRITE(*,*) "There are a maximum of ", max_omp_threads, " threads"
+
 
     max_mol = 0; max_natom = 0
 
