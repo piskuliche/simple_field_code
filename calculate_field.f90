@@ -313,7 +313,7 @@ END SUBROUTINE
 SUBROUTINE All_Distances(na, nb, ra, rb, L, dist, dr_vec)
     
     IMPLICIT NONE
-
+    INTEGER, INTENT(IN) :: na, nb
     REAL, DIMENSION(na, 3), INTENT(IN) :: ra
     REAL, DIMENSION(nb, 3), INTENT(IN) :: rb
     REAL, DIMENSION(3), INTENT(IN) :: L
