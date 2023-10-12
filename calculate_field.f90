@@ -90,19 +90,18 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             ! ... for the rest
             ELSE
                 DO p=1, nmols(type)
-                DO jatom=1, natoms(type)
-                    ratom = rmol(type, p, jatom, :, z)
-                    CALL PBC_Dist(ratom(:), r1(imol,:,z), L, dist1, rtmp1(:))
-                    IF (dist1 .le. rmax) THEN
-                        CALL Field_Contribution(charges(type,jatom), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
-                    ENDIF
+                    DO jatom=1, natoms(type)
+                        ratom = rmol(type, p, jatom, :, z)
+                        CALL PBC_Dist(ratom(:), r1(imol,:,z), L, dist1, rtmp1(:))
+                        IF (dist1 .le. rmax) THEN
+                            CALL Field_Contribution(charges(type,jatom), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                        ENDIF
 
-                    CALL PBC_Dist(ratom(:), r2(imol,:,z), L, dist2, rtmp2(:))
-                    IF (dist2 .le. rmax) THEN
-                        CALL Field_Contribution(charges(type,jatom), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
-                    ENDIF
-
-                ENDDO ! jatom
+                        CALL PBC_Dist(ratom(:), r2(imol,:,z), L, dist2, rtmp2(:))
+                        IF (dist2 .le. rmax) THEN
+                            CALL Field_Contribution(charges(type,jatom), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+                        ENDIF
+                    ENDDO ! jatom
                 ENDDO ! p
             ENDIF ! (type == which_is_wat)
             ENDDO ! type
