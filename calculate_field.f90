@@ -27,7 +27,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
     REAL :: angperau
     
-
+    WRITE(*,*) "Get field without samples"
 
     ! Convert Units
     angperau = 0.52917721092d0
