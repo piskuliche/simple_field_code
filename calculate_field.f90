@@ -194,6 +194,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
             CALL OH_Vector(r2(imol,:,z), rO(imol,:,z), eOH2(imol,:,z))
 
             IF (z == 1 .and. ival == 1) THEN
+                WRITE(*,*) r1(imol,:,z), rO(imol,:,z)
                 WRITE(*,*) eOH1(1,1,1), eOH2(1,1,1), "test"
             END IF
 
