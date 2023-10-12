@@ -133,7 +133,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     REAL, INTENT(IN) :: rmax, L(3)
     REAL, INTENT(IN) :: rO(:,:,:), r1(:,:,:), r2(:,:,:), rmol(:,:,:,:,:)
     REAL, INTENT(IN) :: charges(:,:)
-    REAL, INTENT(IN) :: samples(:)
+    INTEGER, INTENT(IN) :: samples(:)
     
 
     ! Output variables
