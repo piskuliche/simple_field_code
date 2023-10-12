@@ -167,6 +167,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     !$OMP SHARED(dot1, dot2)
     DO z=1, nconfig
         ! Loop over the water molecules to get the electric field
+        ef1_tmp = 0.0; ef2_tmp = 0.0
         DO ival=1, nsamples
             imol = samples(ival)
             ! Get the OH vectors for the water molecule
