@@ -195,6 +195,7 @@ SUBROUTINE OH_Vector(ra, rb, eOH)
     REAL, DIMENSION(3), INTENT(OUT) :: eOH
 
     REAL :: norm
+    INTEGER :: k
 
     eOH = 0.0
     DO k=1,3
