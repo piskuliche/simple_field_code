@@ -55,71 +55,36 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                     CALL PBC_Dist(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
                     CALL PBC_Dist(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
 
-                    ! Chekc if the O -> h(imol) distance is less than rmax
+                    ! Contributions to H1
                     IF (dist1o .le. rmax) THEN
+
                         ! Add field contribution from O
                         CALL Field_Contribution(charges(type,1), r1(imol,:,z), rtmp1o(:), dist1o, ef1_tmp(:))
-                        
+
                         ! Add field contribution from H1
-                        dist1 = 0.0
-                        DO k=1, 3
-                            rtmp1(k) = r1(p,k,z) - L(k)*anint((r1(p,k,z)-r1(imol,k,z))/L(k))
-                            dist1 = dist1 + (r1(imol,k,z) - rtmp1(k))**2
-                        ENDDO
-                        dist1 = Sqrt(dist1)
-                        DO k=1,3
-                            ef1_tmp(k) = ef1_tmp(k) &
-                            & + charges(type,2) * (r1(imol,k,z) - rtmp1(k))/(dist1**3)
-                            !& + E_Cont(charges(type,2), r1(imol,k,z), rtmp1(k), dist1)
-                        ENDDO
-                        
+                        CALL PBC_Dist(r1(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
+                        CALL Field_Contribution(charges(type,2), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+
                         ! Add field contribution from H2
-                        dist1 = 0.0
-                        DO k=1, 3
-                            rtmp1(k) = r2(p,k,z) - L(k)*anint((r2(p,k,z)-r1(imol,k,z))/L(k))
-                            dist1 = dist1 + (r1(imol,k,z) - rtmp1(k))**2
-                        ENDDO
-                        dist1 = Sqrt(dist1)
-                        DO k=1,3
-                            ef1_tmp(k) = ef1_tmp(k) &
-                            & + charges(type,3) * (r1(imol,k,z) - rtmp1(k))/(dist1**3)
-                            !& + E_Cont(charges(type,3), r1(imol,k,z), rtmp1(k), dist1)
-                        ENDDO
+                        CALL PBC_Dist(r2(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
+                        CALL Field_Contribution(charges(type,3), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                        
                     ENDIF ! (dist1o .le. rmax)
 
+                    ! Contributions to H2
                     IF (dist2o .le. rmax) THEN
+
                         ! Add field contribution from O
-                        DO k=1,3
-                            ef2_tmp(k) = ef2_tmp(k) &
-                            & + charges(type,1) * (r2(imol,k,z) - rtmp2o(k))/(dist2o**3)
-                            !& + E_Cont(charges(type,1), r2(imol,k,z), rtmp2o(k), dist2o)
-                        ENDDO
+                        CALL Field_Contribution(charges(type,1), r2(imol,:,z), rtmp2o(:), dist2o, ef2_tmp(:))
 
                         ! Add field contribution from H1
-                        dist2 = 0.0
-                        DO k=1, 3
-                            rtmp2(k) = r1(p,k,z) - L(k)*anint((r1(p,k,z)-r2(imol,k,z))/L(k))
-                            dist2 = dist2 + (r2(imol,k,z) - rtmp2(k))**2
-                        ENDDO
-                        dist2 = Sqrt(dist2)
-                        DO k=1,3
-                            ef2_tmp(k) = ef2_tmp(k) &
-                            & + charges(type,2) * (r2(imol,k,z) - rtmp2(k))/(dist2**3)
-                            !& + E_Cont(charges(type,2), r2(imol,k,z), rtmp2(k), dist2)
-                        ENDDO
-                        
+                        CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist1, rtmp2(:))
+                        CALL Field_Contribution(charges(type,2), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+
                         ! Add field contribution from H2
-                        dist2 = 0.0
-                        DO k=1, 3
-                            rtmp2(k) = r2(p,k,z) - L(k)*anint((r2(p,k,z)-r2(imol,k,z))/L(k))
-                            dist2 = dist2 + (r2(imol,k,z) - rtmp2(k))**2
-                        ENDDO
-                        dist2 = Sqrt(dist2)
-                        DO k=1,3
-                            ef2_tmp(k) = ef2_tmp(k) &
-                            & + charges(type,3) * (r2(imol,k,z) - rtmp2(k))/(dist2**3)
-                            !& + E_Cont(charges(type,3), r2(imol,k,z), rtmp2(k), dist2)
-                        ENDDO
+                        CALL PBC_Dist(r2(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
+                        CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+
                     ENDIF ! (dist1o .le. rmax)
                 ENDDO ! p
             ! ... for the rest
