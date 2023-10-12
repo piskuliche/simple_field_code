@@ -249,7 +249,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
         ENDDO !imol
     ENDDO ! z
     !$OMP END PARALLEL DO
-END SUBROUTINE Get_Field
+END SUBROUTINE Get_Field_Samples
 
 
 

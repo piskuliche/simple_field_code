@@ -160,4 +160,4 @@ SUBROUTINE WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, nmol, nconfig, nsamples, s
     ! Close Fortran interface
     CALL h5close_f(ERROR_FLAG)
 
-END SUBROUTINE WRITE_HD5F
+END SUBROUTINE WRITE_HD5F_Samples
