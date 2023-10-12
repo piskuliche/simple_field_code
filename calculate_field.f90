@@ -294,11 +294,13 @@ SUBROUTINE OH_Vector(ra, rb, eOH)
     INTEGER :: k
 
     eOH = 0.0
+    norm = 0.0
     DO k=1,3
         eOH(k) = ra(k) - rb(k)
         norm = norm + eOH(k)**2
     ENDDO ! k
     norm = SQRT(norm)
+
     DO k=1,3
         eOH(k) = eOH(k) / norm
     ENDDO ! k
