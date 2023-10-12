@@ -222,7 +222,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
                         CALL Field_Contribution(charges(type,1), r2(imol,:,z), rtmp2o(:), dist2o, ef2_tmp(:))
 
                         ! Add field contribution from H1
-                        CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist1, rtmp2(:))
+                        CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
                         CALL Field_Contribution(charges(type,2), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
 
                         ! Add field contribution from H2
