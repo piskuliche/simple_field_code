@@ -82,16 +82,13 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
                         ! Add field contribution from O
                         CALL Field_Contribution(charges(type,1), r2(imol,:,z), rtmp2o(:), dist2o, ef2_tmp(:))
-                        IF (z == 1 .and. imol ==1) WRITE(*,*) dist2o, "Or2", ef2_tmp(1)
                         ! Add field contribution from H1
                         CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
                         CALL Field_Contribution(charges(type,2), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
-                        IF (z == 1 .and. imol ==1) WRITE(*,*) dist2, "r1r2", ef2_tmp(1)
 
                         ! Add field contribution from H2
                         CALL PBC_Dist(r2(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
                         CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
-                        IF (z == 1 .and. imol ==1) WRITE(*,*) dist2, "r2r2", ef2_tmp(1)
 
                         IF (.NOT. ieee_is_finite(ef2_tmp(1))) THEN
                             WRITE(*,*) "ef2_tmp not finite"
