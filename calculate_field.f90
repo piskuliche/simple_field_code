@@ -119,6 +119,9 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             END IF
             dot1(imol,z) = Dot_Product(eOH1(imol,:,z), ef1_tmp(:))
             dot2(imol,z) = Dot_Product(eOH2(imol,:,z), ef2_tmp(:))
+            IF (z == 1 .and. imol == 1) THEN
+                WRITE(*,*) dot1(1,1), dot2(1,1), "testdot"
+            END IF
         ENDDO !imol
     ENDDO ! z
     !$OMP END PARALLEL DO
@@ -167,7 +170,6 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     !$OMP SHARED(dot1, dot2)
     DO z=1, nconfig
         ! Loop over the water molecules to get the electric field
-        ef1_tmp = 0.0; ef2_tmp = 0.0
         DO ival=1, nsamples
             imol = samples(ival)
             ! Get the OH vectors for the water molecule
