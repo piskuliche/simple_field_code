@@ -52,18 +52,14 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                 DO p=1, nmols(type)
                     IF (p .eq. imol) CYCLE ! Don't calculate if same mol
                     ! Check oxygen distances
-                    CALL PBC_DIST(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
-                    CALL PBC_DIST(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
+                    CALL PBC_Dist(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
+                    CALL PBC_Dist(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
 
                     ! Chekc if the O -> h(imol) distance is less than rmax
                     IF (dist1o .le. rmax) THEN
                         ! Add field contribution from O
-                        DO k=1,3
-                            ef1_tmp(k) = ef1_tmp(k) &
-                            & + charges(type,1) * (r1(imol,k,z) - rtmp1o(k))/(dist1o**3)
-                            !& + E_Cont(charges(type,1), r1(imol,k,z), rtmp1o(k), dist1o)
-                        ENDDO
-
+                        CALL Field_Contribution(charges(type,1), r1(imol,:,z), rtmp1o(:), dist1o, ef1_tmp(:))
+                        
                         ! Add field contribution from H1
                         dist1 = 0.0
                         DO k=1, 3
@@ -221,4 +217,19 @@ SUBROUTINE PBC_Dist(ra, rb, L, dist, vector)
     ENDDO
     dist = SQRT(dist)
 
-END SUBROUTINE PBC_DIST
+END SUBROUTINE PBC_Dist
+
+SUBROUTINE Field_Contribution(q, ra, vector, dist, efield)
+    
+    IMPLICIT NONE
+
+    REAL, INTENT(IN) :: q, dist
+    REAL, DIMENSION(3), INTENT(IN) :: ra, vector
+    REAL, DIMENSION(3), INTENT(INOUT) :: efield
+
+    INTEGER :: k
+    DO k=1,3
+        efield(k) = efield(k) + q * (ra(k) - vector(k))/(dist**3)
+    ENDDO
+
+END SUBROUTINE
