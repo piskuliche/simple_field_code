@@ -46,8 +46,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             DO k=1, 3
                 eOH2_tmp(k) = r2(imol,k,z) - rO(imol,k,z)
                 eOH1_tmp(k) = r1(imol,k,z) - rO(imol,k,z)
-                norm1 = norm1 + eOH1(imol,k,z)**2
-                norm2 = norm2 + eOH2(imol,k,z)**2
+                norm1 = norm1 + eOH1_tmp(k)**2
+                norm2 = norm2 + eOH2_tmp(k)**2
             ENDDO ! k
             norm1 = SQRT(norm1); norm2 = SQRT(norm2)
 
