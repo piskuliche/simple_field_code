@@ -243,6 +243,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
             ENDDO
             IF (z == 1 .and. imol == 1) THEN
                 WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
+                WRITE(*,*) eOH2(1,1,1), ef2_tmp(1), "test"
             END IF
             dot1(imol,z) = Dot_Product(eOH1(imol,:,z), ef1_tmp(:))
             dot2(imol,z) = Dot_Product(eOH2(imol,:,z), ef2_tmp(:))
