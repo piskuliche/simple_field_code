@@ -188,7 +188,9 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                 ef1_tmp(k) = angperau**2*ef1_tmp(k)
                 ef2_tmp(k) = angperau**2*ef2_tmp(k) 
             ENDDO
-
+            IF (z == 1 .and. imol == 1) THEN
+                WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
+            END IF
             dot1(imol,z) = Dot_Product(eOH1(imol,:,z), ef1_tmp(:))
             dot2(imol,z) = Dot_Product(eOH2(imol,:,z), ef2_tmp(:))
         ENDDO !imol
