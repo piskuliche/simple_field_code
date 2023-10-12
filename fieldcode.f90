@@ -15,7 +15,7 @@ PROGRAM Field
     REAL :: rmax            ! Cutoff radius
     REAL, DIMENSION(3) :: L ! Box length
     INTEGER :: nsamples
-    REAL, ALLOCATABLE, DIMENSION(:) samples ! Samples for field calculation
+    REAL, ALLOCATABLE, DIMENSION(:) :: samples ! Samples for field calculation
     REAL, ALLOCATABLE, DIMENSION(:,:,:) :: rO, r1, r2 ! Water coordinate arrays
     REAL, ALLOCATABLE, DIMENSION(:,:,:,:,:) :: rmol ! Molecular coordinate arrays
 
