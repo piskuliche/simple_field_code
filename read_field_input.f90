@@ -219,7 +219,7 @@ SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r
     INTEGER :: which_is_wat
     REAL, DIMENSION(3) :: L
     REAL, DIMENSION(:,:), INTENT(INOUT) :: rO, r1, r2
-    REAL, DIMENSION(:,:,:,:,:), INTENT(OUT) :: rmol
+    REAL, DIMENSION(:,:,:,:,:), INTENT(INOUT) :: rmol
 
     INTEGER :: i, type, jatom,k
     CHARACTER(LEN=10) :: ctmp
