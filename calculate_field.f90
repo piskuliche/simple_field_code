@@ -38,6 +38,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     angperau = 0.52917721092d0
 
     num_chunks = ceiling(real(nconfig)/ real(maxconfig))
+    eOH1 = 0.0; eOH2 = 0.0
 
     DO chunk=1, num_chunks
         rO = 0.0; r1 = 0.0; r2 = 0.0; rmol = 0.0
@@ -48,7 +49,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol(:,:,:,:,z))
         ENDDO ! z 
 
-        eOH1 = 0.0; eOH2 = 0.0
+
         !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
         !$OMP SHARED( rO, r1, r2, rmol, charges), & 
         !$OMP SHARED(eOH1, eOH2), &
