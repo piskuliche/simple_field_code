@@ -195,8 +195,8 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     num_chunks = ceiling(real(config)/ real(maxconfig))
 
     DO chunk=1, nchunk
-        DO z=1, nperchunk
-            IF (chunk*nperchunk + z > nconfig) then
+        DO z=1, maxconfig
+            IF (chunk*maxconfig + z > nconfig) then
                 EXIT
             ENDIF
             CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol(:,:,:,:,z))
@@ -209,7 +209,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
         !$OMP SHARED(eOH1, eOH2), &
         !$OMP SHARED(dot1, dot2)
         DO z=1, nconfig
-            iconfig = chunk*nperchunk + z
+            iconfig = chunk*maxconfig + z
             ! Loop over the water molecules to get the electric field
             DO ival=1, nsamples
                 imol = samples(ival)
