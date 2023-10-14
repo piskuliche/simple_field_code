@@ -252,7 +252,7 @@ SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r
                     ! Make the molecule whole
                     IF (jatom > 1) THEN
                         DO k=1, 3
-                            rmol(type,i,jatom,k,z) = rmol(type,i,jatom,k) &
+                            rmol(type,i,jatom,k) = rmol(type,i,jatom,k) &
                             & - L(k)*anint((rmol(type,i,jatom,k)-rmol(type,i,1,k))/L(k))
                         ENDDO ! k
                     END IF ! (jatom > 1)
