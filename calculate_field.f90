@@ -37,7 +37,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     ! Convert Units
     angperau = 0.52917721092d0
 
-    num_chunks = ceiling(real(config)/ real(maxconfig))
+    num_chunks = ceiling(real(nconfig)/ real(maxconfig))
 
     DO chunk=1, nchunk
         DO z=1, maxconfig
@@ -192,7 +192,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     ! Convert Units
     angperau = 0.52917721092d0
 
-    num_chunks = ceiling(real(config)/ real(maxconfig))
+    num_chunks = ceiling(real(nconfig)/ real(maxconfig))
 
     DO chunk=1, nchunk
         DO z=1, maxconfig
