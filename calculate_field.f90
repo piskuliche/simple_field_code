@@ -104,14 +104,6 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                             CALL PBC_Dist(r2(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
                             CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
 
-                            IF (.NOT. ieee_is_finite(ef2_tmp(1))) THEN
-                                WRITE(*,*) "ef2_tmp not finite"
-                                WRITE(*,*) dist2o, "r2r2", ef2_tmp(1)
-                                WRITE(*,*) L, dist2
-                                WRITE(*,*) ef2_tmp(:)
-                                ERROR STOP "Error: Exiting"
-                            ENDIF
-
                         ENDIF ! (dist1o .le. rmax)
                     ENDDO ! p
                 ! ... for the rest
@@ -140,15 +132,10 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                     ef1_tmp(k) = angperau**2*ef1_tmp(k)
                     ef2_tmp(k) = angperau**2*ef2_tmp(k) 
                 ENDDO
-                IF (z == 1 .and. imol == 1) THEN
-                    WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
-                    WRITE(*,*) eOH2(1,1,1), ef2_tmp(1), "test"
-                END IF
+
                 dot1(imol,iconfig) = Dot_Product(eOH1(imol,:,iconfig), ef1_tmp(:))
                 dot2(imol,iconfig) = Dot_Product(eOH2(imol,:,iconfig), ef2_tmp(:))
-                IF (z == 1 .and. imol == 1) THEN
-                    WRITE(*,*) dot1(1,1), dot2(1,1), "testdot"
-                END IF
+
             ENDDO !imol
         ENDDO ! z
         !$OMP END PARALLEL DO
@@ -223,12 +210,10 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
                 ! Get the OH vectors for the water molecule
                 CALL OH_Vector(r1(imol,:,z), rO(imol,:,z), eOH1(imol,:,iconfig))
                 CALL OH_Vector(r2(imol,:,z), rO(imol,:,z), eOH2(imol,:,iconfig))
-
-                IF (z == 1 .and. ival == 1) THEN
-                    WRITE(*,*) ival, imol
-                    WRITE(*,*) r1(imol,:,z), rO(imol,:,z)
-                    WRITE(*,*) eOH1(1,1,1), eOH2(1,1,1), "test"
-                END IF
+                IF (chunk == 1 .and. imol == 1) THEN
+                    WRITE(*,*) "w", eOH1(imol,:,iconfig)
+                    WRITE(*,*) "w", eOH2(imol,:,iconfig)
+                ENDIF
 
                 ! Calculate the field contribution...
                 DO type=1, nmoltypes
@@ -298,15 +283,10 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
                     ef1_tmp(k) = angperau**2*ef1_tmp(k)
                     ef2_tmp(k) = angperau**2*ef2_tmp(k) 
                 ENDDO
-                IF (chunk == 1 .and. z == 1 .and. imol == 1) THEN
-                    WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
-                    WRITE(*,*) eOH2(1,1,1), ef2_tmp(1), "test"
-                END IF
+
                 dot1(imol,iconfig) = Dot_Product(eOH1(imol,:,iconfig), ef1_tmp(:))
                 dot2(imol,iconfig) = Dot_Product(eOH2(imol,:,iconfig), ef2_tmp(:))
-                IF (z == 1 .and. imol == 1) THEN
-                    WRITE(*,*) dot1(1,1), dot2(1,1), "testdot"
-                END IF
+
             ENDDO !imol
         ENDDO ! z
         !$OMP END PARALLEL DO
