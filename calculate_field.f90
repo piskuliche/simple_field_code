@@ -44,7 +44,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             IF (chunk*nperchunk + z > nconfig) then
                 EXIT
             ENDIF
-            CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol((:,:,:,:,z)))
+            CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol(:,:,:,:,z))
         ENDDO ! z 
 
         eOH1 = 0.0; eOH2 = 0.0
@@ -199,7 +199,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
             IF (chunk*nperchunk + z > nconfig) then
                 EXIT
             ENDIF
-            CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol((:,:,:,:,z)))
+            CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol(:,:,:,:,z))
         ENDDO ! z 
 
         !efield1 = 0.0; efield2 = 0.0
