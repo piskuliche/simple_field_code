@@ -6,7 +6,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     
     IMPLICIT NONE
     
-
+    INTEGER, PARAMETER :: maxconfig = 100
+    INTEGER :: num_chunks 
     ! Input variables
     INTEGER, INTENT(IN) :: nconfig, nmoltypes, nmols(:), natoms(:), which_is_wat
     REAL, INTENT(IN) :: rmax, L(3)
@@ -22,7 +23,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
     !REAL, DIMENSION(nmols(which_is_wat),3,nconfig) :: efield1, efield2
 
-    INTEGER imol, k, z, p, type, jatom
+    INTEGER :: imol, k, z, p, type, jatom, chunk
+    INTEGER :: iconfig
 
     REAL :: norm1, norm2
     REAL :: dist1o, dist2o, dist1, dist2
@@ -35,114 +37,128 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     ! Convert Units
     angperau = 0.52917721092d0
 
-    !efield1 = 0.0; efield2 = 0.0
-    eOH1 = 0.0; eOH2 = 0.0
-    !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
-    !$OMP SHARED( rO, r1, r2, rmol, charges), & 
-    !$OMP SHARED(eOH1, eOH2), &
-    !$OMP SHARED(dot1, dot2)
-    DO z=1, nconfig
-        ! Loop over the water molecules to get the electric field
-        DO imol=1, nmols(which_is_wat)
-            ! Zero the eoh
-            ef1_tmp = 0.0; ef2_tmp = 0.0
+    num_chunks = ceiling(real(config)/ real(maxconfig))
 
-            ! Get the OH vectors for the water molecule
-            CALL OH_Vector(r1(imol,:,z),rO(imol,:,z),eOH1(imol,:,z))
-            CALL OH_Vector(r2(imol,:,z),rO(imol,:,z),eOH2(imol,:,z))
+    DO chunk=1, nchunk
+        DO z=1, nperchunk
+            IF (chunk*nperchunk + z > nconfig) then
+                EXIT
+            ENDIF
+            CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol((:,:,:,:,z)))
+        ENDDO ! z 
 
-            ! Calculate the field contribution...
-            DO type=1, nmoltypes
-            ! ... for water
-            IF (type == which_is_wat) THEN
-                DO p=1, nmols(type)
-                    IF (p .eq. imol) CYCLE ! Don't calculate if same mol
-                    ! Check oxygen distances
-                    CALL PBC_Dist(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
-                    CALL PBC_Dist(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
+        eOH1 = 0.0; eOH2 = 0.0
+        !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
+        !$OMP SHARED( rO, r1, r2, rmol, charges), & 
+        !$OMP SHARED(eOH1, eOH2), &
+        !$OMP SHARED(dot1, dot2)
+        DO z=1, nperchunk
+            iconfig = chunk*nperchunk + z
+            ! Loop over the water molecules to get the electric field
+            DO imol=1, nmols(which_is_wat)
+                ! Zero the eoh
+                ef1_tmp = 0.0; ef2_tmp = 0.0
 
-                    ! Contributions to H1
-                    IF (dist1o .le. rmax) THEN
+                ! Get the OH vectors for the water molecule
+                CALL OH_Vector(r1(imol,:,z),rO(imol,:,z),eOH1(imol,:,iconfig))
+                CALL OH_Vector(r2(imol,:,z),rO(imol,:,z),eOH2(imol,:,iconfig))
 
-                        ! Add field contribution from O
-                        CALL Field_Contribution(charges(type,1), r1(imol,:,z), rtmp1o(:), dist1o, ef1_tmp(:))
+                ! Calculate the field contribution...
+                DO type=1, nmoltypes
+                ! ... for water
+                IF (type == which_is_wat) THEN
+                    DO p=1, nmols(type)
+                        IF (p .eq. imol) CYCLE ! Don't calculate if same mol
+                        ! Check oxygen distances
+                        CALL PBC_Dist(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
+                        CALL PBC_Dist(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
 
-                        ! Add field contribution from H1
-                        CALL PBC_Dist(r1(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
-                        CALL Field_Contribution(charges(type,2), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                        ! Contributions to H1
+                        IF (dist1o .le. rmax) THEN
 
-                        ! Add field contribution from H2
-                        CALL PBC_Dist(r2(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
-                        CALL Field_Contribution(charges(type,3), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
-                        
-                    ENDIF ! (dist1o .le. rmax)
+                            ! Add field contribution from O
+                            CALL Field_Contribution(charges(type,1), r1(imol,:,z), rtmp1o(:), dist1o, ef1_tmp(:))
 
-                    ! Contributions to H2
-                    IF (dist2o .le. rmax) THEN
+                            ! Add field contribution from H1
+                            CALL PBC_Dist(r1(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
+                            CALL Field_Contribution(charges(type,2), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
 
-                        ! Add field contribution from O
-                        CALL Field_Contribution(charges(type,1), r2(imol,:,z), rtmp2o(:), dist2o, ef2_tmp(:))
-                        ! Add field contribution from H1
-                        CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
-                        CALL Field_Contribution(charges(type,2), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+                            ! Add field contribution from H2
+                            CALL PBC_Dist(r2(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
+                            CALL Field_Contribution(charges(type,3), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                            
+                        ENDIF ! (dist1o .le. rmax)
 
-                        ! Add field contribution from H2
-                        CALL PBC_Dist(r2(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
-                        CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+                        ! Contributions to H2
+                        IF (dist2o .le. rmax) THEN
 
-                        IF (.NOT. ieee_is_finite(ef2_tmp(1))) THEN
-                            WRITE(*,*) "ef2_tmp not finite"
-                            WRITE(*,*) dist2o, "r2r2", ef2_tmp(1)
-                            WRITE(*,*) L, dist2
-                            WRITE(*,*) ef2_tmp(:)
-                            ERROR STOP "Error: Exiting"
-                        ENDIF
+                            ! Add field contribution from O
+                            CALL Field_Contribution(charges(type,1), r2(imol,:,z), rtmp2o(:), dist2o, ef2_tmp(:))
+                            ! Add field contribution from H1
+                            CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
+                            CALL Field_Contribution(charges(type,2), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
 
-                    ENDIF ! (dist1o .le. rmax)
-                ENDDO ! p
-            ! ... for the rest
-            ELSE
-                DO p=1, nmols(type)
-                    DO jatom=1, natoms(type)
-                        ratom = rmol(type, p, jatom, :, z)
-                        ! Contribution from jatom to H1
-                        CALL PBC_Dist(ratom(:), r1(imol,:,z), L, dist1, rtmp1(:))
-                        IF (dist1 .le. rmax) THEN
-                            CALL Field_Contribution(charges(type,jatom), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
-                        ENDIF
+                            ! Add field contribution from H2
+                            CALL PBC_Dist(r2(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
+                            CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
 
-                        ! Contribtuion from jatom to H2
-                        CALL PBC_Dist(ratom(:), r2(imol,:,z), L, dist2, rtmp2(:))
-                        IF (dist2 .le. rmax) THEN
-                            CALL Field_Contribution(charges(type,jatom), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
-                        ENDIF
-                    ENDDO ! jatom
-                ENDDO ! p
-            ENDIF ! (type == which_is_wat)
-            ENDDO ! type
-            
-            ! Convert units and project the 
-            DO k=1,3
-                ef1_tmp(k) = angperau**2*ef1_tmp(k)
-                ef2_tmp(k) = angperau**2*ef2_tmp(k) 
-            ENDDO
-            IF (z == 1 .and. imol == 1) THEN
-                WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
-                WRITE(*,*) eOH2(1,1,1), ef2_tmp(1), "test"
-            END IF
-            dot1(imol,z) = Dot_Product(eOH1(imol,:,z), ef1_tmp(:))
-            dot2(imol,z) = Dot_Product(eOH2(imol,:,z), ef2_tmp(:))
-            IF (z == 1 .and. imol == 1) THEN
-                WRITE(*,*) dot1(1,1), dot2(1,1), "testdot"
-            END IF
-        ENDDO !imol
-    ENDDO ! z
-    !$OMP END PARALLEL DO
+                            IF (.NOT. ieee_is_finite(ef2_tmp(1))) THEN
+                                WRITE(*,*) "ef2_tmp not finite"
+                                WRITE(*,*) dist2o, "r2r2", ef2_tmp(1)
+                                WRITE(*,*) L, dist2
+                                WRITE(*,*) ef2_tmp(:)
+                                ERROR STOP "Error: Exiting"
+                            ENDIF
+
+                        ENDIF ! (dist1o .le. rmax)
+                    ENDDO ! p
+                ! ... for the rest
+                ELSE
+                    DO p=1, nmols(type)
+                        DO jatom=1, natoms(type)
+                            ratom = rmol(type, p, jatom, :, z)
+                            ! Contribution from jatom to H1
+                            CALL PBC_Dist(ratom(:), r1(imol,:,z), L, dist1, rtmp1(:))
+                            IF (dist1 .le. rmax) THEN
+                                CALL Field_Contribution(charges(type,jatom), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                            ENDIF
+
+                            ! Contribtuion from jatom to H2
+                            CALL PBC_Dist(ratom(:), r2(imol,:,z), L, dist2, rtmp2(:))
+                            IF (dist2 .le. rmax) THEN
+                                CALL Field_Contribution(charges(type,jatom), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+                            ENDIF
+                        ENDDO ! jatom
+                    ENDDO ! p
+                ENDIF ! (type == which_is_wat)
+                ENDDO ! type
+                
+                ! Convert units and project the 
+                DO k=1,3
+                    ef1_tmp(k) = angperau**2*ef1_tmp(k)
+                    ef2_tmp(k) = angperau**2*ef2_tmp(k) 
+                ENDDO
+                IF (z == 1 .and. imol == 1) THEN
+                    WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
+                    WRITE(*,*) eOH2(1,1,1), ef2_tmp(1), "test"
+                END IF
+                dot1(imol,iconfig) = Dot_Product(eOH1(imol,:,iconfig), ef1_tmp(:))
+                dot2(imol,iconfig) = Dot_Product(eOH2(imol,:,iconfig), ef2_tmp(:))
+                IF (z == 1 .and. imol == 1) THEN
+                    WRITE(*,*) dot1(1,1), dot2(1,1), "testdot"
+                END IF
+            ENDDO !imol
+        ENDDO ! z
+        !$OMP END PARALLEL DO
+    ENDDO ! Chunks
 END SUBROUTINE Get_Field
 
 SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, samples, &
                     & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
     IMPLICIT NONE
+
+    INTEGER, PARAMETER :: maxconfig = 100
+    INTEGER :: num_chunks 
 
     ! Input variables
     INTEGER, INTENT(IN) :: nconfig, nmoltypes, nmols(:), natoms(:), which_is_wat
@@ -160,7 +176,8 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
 
     !REAL, DIMENSION(nmols(which_is_wat),3,nconfig) :: efield1, efield2
 
-    INTEGER imol, ival, k, z, p, type, jatom
+    INTEGER :: imol, ival, k, z, p, type, jatom
+    INTEGER :: iconfig
 
     REAL :: norm1, norm2
     REAL :: dist1o, dist2o, dist1, dist2
@@ -175,110 +192,122 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     ! Convert Units
     angperau = 0.52917721092d0
 
-    !efield1 = 0.0; efield2 = 0.0
-    eOH1 = 0.0; eOH2 = 0.0
-    !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
-    !$OMP SHARED( rO, r1, r2, rmol, charges), & 
-    !$OMP SHARED(eOH1, eOH2), &
-    !$OMP SHARED(dot1, dot2)
-    DO z=1, nconfig
-        ! Loop over the water molecules to get the electric field
-        DO ival=1, nsamples
-            imol = samples(ival)
+    num_chunks = ceiling(real(config)/ real(maxconfig))
 
-            ! Zero the eoh
-            ef1_tmp = 0.0; ef2_tmp = 0.0
+    DO chunk=1, nchunk
+        DO z=1, nperchunk
+            IF (chunk*nperchunk + z > nconfig) then
+                EXIT
+            ENDIF
+            CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol((:,:,:,:,z)))
+        ENDDO ! z 
 
-            ! Get the OH vectors for the water molecule
-            CALL OH_Vector(r1(imol,:,z), rO(imol,:,z), eOH1(imol,:,z))
-            CALL OH_Vector(r2(imol,:,z), rO(imol,:,z), eOH2(imol,:,z))
+        !efield1 = 0.0; efield2 = 0.0
+        eOH1 = 0.0; eOH2 = 0.0
+        !$OMP PARALLEL DO DEFAULT(FIRSTPRIVATE),  SCHEDULE(STATIC), &
+        !$OMP SHARED( rO, r1, r2, rmol, charges), & 
+        !$OMP SHARED(eOH1, eOH2), &
+        !$OMP SHARED(dot1, dot2)
+        DO z=1, nconfig
+            iconfig = chunk*nperchunk + z
+            ! Loop over the water molecules to get the electric field
+            DO ival=1, nsamples
+                imol = samples(ival)
 
-            IF (z == 1 .and. ival == 1) THEN
-                WRITE(*,*) ival, imol
-                WRITE(*,*) r1(imol,:,z), rO(imol,:,z)
-                WRITE(*,*) eOH1(1,1,1), eOH2(1,1,1), "test"
-            END IF
+                ! Zero the eoh
+                ef1_tmp = 0.0; ef2_tmp = 0.0
 
-            ! Calculate the field contribution...
-            DO type=1, nmoltypes
-            ! ... for water
-            IF (type == which_is_wat) THEN
-                DO p=1, nmols(type)
-                    IF (p .eq. imol) CYCLE ! Don't calculate if same mol
-                    ! Check oxygen distances
-                    CALL PBC_Dist(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
-                    CALL PBC_Dist(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
+                ! Get the OH vectors for the water molecule
+                CALL OH_Vector(r1(imol,:,z), rO(imol,:,z), eOH1(imol,:,iconfig))
+                CALL OH_Vector(r2(imol,:,z), rO(imol,:,z), eOH2(imol,:,iconfig))
 
-                    ! Contributions to H1
-                    IF (dist1o .le. rmax) THEN
+                IF (z == 1 .and. ival == 1) THEN
+                    WRITE(*,*) ival, imol
+                    WRITE(*,*) r1(imol,:,z), rO(imol,:,z)
+                    WRITE(*,*) eOH1(1,1,1), eOH2(1,1,1), "test"
+                END IF
 
-                        ! Add field contribution from O
-                        CALL Field_Contribution(charges(type,1), r1(imol,:,z), rtmp1o(:), dist1o, ef1_tmp(:))
+                ! Calculate the field contribution...
+                DO type=1, nmoltypes
+                ! ... for water
+                IF (type == which_is_wat) THEN
+                    DO p=1, nmols(type)
+                        IF (p .eq. imol) CYCLE ! Don't calculate if same mol
+                        ! Check oxygen distances
+                        CALL PBC_Dist(rO(p,:,z), r1(imol,:,z), L, dist1o, rtmp1o(:))
+                        CALL PBC_Dist(rO(p,:,z), r2(imol,:,z), L, dist2o, rtmp2o(:))
 
-                        ! Add field contribution from H1
-                        CALL PBC_Dist(r1(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
-                        CALL Field_Contribution(charges(type,2), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                        ! Contributions to H1
+                        IF (dist1o .le. rmax) THEN
 
-                        ! Add field contribution from H2
-                        CALL PBC_Dist(r2(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
-                        CALL Field_Contribution(charges(type,3), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
-                        
-                    ENDIF ! (dist1o .le. rmax)
+                            ! Add field contribution from O
+                            CALL Field_Contribution(charges(type,1), r1(imol,:,z), rtmp1o(:), dist1o, ef1_tmp(:))
 
-                    ! Contributions to H2
-                    IF (dist2o .le. rmax) THEN
+                            ! Add field contribution from H1
+                            CALL PBC_Dist(r1(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
+                            CALL Field_Contribution(charges(type,2), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
 
-                        ! Add field contribution from O
-                        CALL Field_Contribution(charges(type,1), r2(imol,:,z), rtmp2o(:), dist2o, ef2_tmp(:))
+                            ! Add field contribution from H2
+                            CALL PBC_Dist(r2(p,:,z), r1(imol,:,z), L, dist1, rtmp1(:))
+                            CALL Field_Contribution(charges(type,3), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                            
+                        ENDIF ! (dist1o .le. rmax)
 
-                        ! Add field contribution from H1
-                        CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
-                        CALL Field_Contribution(charges(type,2), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+                        ! Contributions to H2
+                        IF (dist2o .le. rmax) THEN
 
-                        ! Add field contribution from H2
-                        CALL PBC_Dist(r2(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
-                        CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+                            ! Add field contribution from O
+                            CALL Field_Contribution(charges(type,1), r2(imol,:,z), rtmp2o(:), dist2o, ef2_tmp(:))
 
-                    ENDIF ! (dist1o .le. rmax)
-                ENDDO ! p
-            ! ... for the rest
-            ELSE
-                DO p=1, nmols(type)
-                    DO jatom=1, natoms(type)
-                        ratom = rmol(type, p, jatom, :, z)
-                        ! Contribution from jatom to H1
-                        CALL PBC_Dist(ratom(:), r1(imol,:,z), L, dist1, rtmp1(:))
-                        IF (dist1 .le. rmax) THEN
-                            CALL Field_Contribution(charges(type,jatom), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
-                        ENDIF
+                            ! Add field contribution from H1
+                            CALL PBC_Dist(r1(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
+                            CALL Field_Contribution(charges(type,2), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
 
-                        ! Contribtuion from jatom to H2
-                        CALL PBC_Dist(ratom(:), r2(imol,:,z), L, dist2, rtmp2(:))
-                        IF (dist2 .le. rmax) THEN
-                            CALL Field_Contribution(charges(type,jatom), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
-                        ENDIF
-                    ENDDO ! jatom
-                ENDDO ! p
-            ENDIF ! (type == which_is_wat)
-            ENDDO ! type
-            
-            ! Convert units and project the 
-            DO k=1,3
-                ef1_tmp(k) = angperau**2*ef1_tmp(k)
-                ef2_tmp(k) = angperau**2*ef2_tmp(k) 
-            ENDDO
-            IF (z == 1 .and. imol == 1) THEN
-                WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
-                WRITE(*,*) eOH2(1,1,1), ef2_tmp(1), "test"
-            END IF
-            dot1(imol,z) = Dot_Product(eOH1(imol,:,z), ef1_tmp(:))
-            dot2(imol,z) = Dot_Product(eOH2(imol,:,z), ef2_tmp(:))
-            IF (z == 1 .and. imol == 1) THEN
-                WRITE(*,*) dot1(1,1), dot2(1,1), "testdot"
-            END IF
-        ENDDO !imol
-    ENDDO ! z
-    !$OMP END PARALLEL DO
+                            ! Add field contribution from H2
+                            CALL PBC_Dist(r2(p,:,z), r2(imol,:,z), L, dist2, rtmp2(:))
+                            CALL Field_Contribution(charges(type,3), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+
+                        ENDIF ! (dist1o .le. rmax)
+                    ENDDO ! p
+                ! ... for the rest
+                ELSE
+                    DO p=1, nmols(type)
+                        DO jatom=1, natoms(type)
+                            ratom = rmol(type, p, jatom, :, z)
+                            ! Contribution from jatom to H1
+                            CALL PBC_Dist(ratom(:), r1(imol,:,z), L, dist1, rtmp1(:))
+                            IF (dist1 .le. rmax) THEN
+                                CALL Field_Contribution(charges(type,jatom), r1(imol,:,z), rtmp1(:), dist1, ef1_tmp(:))
+                            ENDIF
+
+                            ! Contribtuion from jatom to H2
+                            CALL PBC_Dist(ratom(:), r2(imol,:,z), L, dist2, rtmp2(:))
+                            IF (dist2 .le. rmax) THEN
+                                CALL Field_Contribution(charges(type,jatom), r2(imol,:,z), rtmp2(:), dist2, ef2_tmp(:))
+                            ENDIF
+                        ENDDO ! jatom
+                    ENDDO ! p
+                ENDIF ! (type == which_is_wat)
+                ENDDO ! type
+                
+                ! Convert units and project the 
+                DO k=1,3
+                    ef1_tmp(k) = angperau**2*ef1_tmp(k)
+                    ef2_tmp(k) = angperau**2*ef2_tmp(k) 
+                ENDDO
+                IF (z == 1 .and. imol == 1) THEN
+                    WRITE(*,*) eOH1(1,1,1), ef1_tmp(1), "test"
+                    WRITE(*,*) eOH2(1,1,1), ef2_tmp(1), "test"
+                END IF
+                dot1(imol,iconfig) = Dot_Product(eOH1(imol,:,iconfig), ef1_tmp(:))
+                dot2(imol,iconfig) = Dot_Product(eOH2(imol,:,iconfig), ef2_tmp(:))
+                IF (z == 1 .and. imol == 1) THEN
+                    WRITE(*,*) dot1(1,1), dot2(1,1), "testdot"
+                END IF
+            ENDDO !imol
+        ENDDO ! z
+        !$OMP END PARALLEL DO
+    ENDDO ! Chunks
 END SUBROUTINE Get_Field_Samples
 
 
