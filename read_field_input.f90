@@ -176,3 +176,88 @@ SUBROUTINE Read_Samples(nsamples, samples)
     CLOSE(15)
 
 END SUBROUTINE Read_Samples
+
+SUBROUTINE Read_Trajectory_Frames(unit, ntoread, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol)
+    IMPLICIT NONE
+    INTEGER, INTENT(IN) :: unit, ntoread, nmoltypes, which_is_wat
+    INTEGER, DIMENSION(10), INTENT(IN) :: nmols, natoms
+    REAL, DIMENSION(3), INTENT(IN) :: L
+    REAL, DIMENSION(:,:,:), INTENT(INOUT) :: rO, r1, r2
+    REAL, DIMENSION(:,:,:,:,:), INTENT(INOUT) :: rmol
+    INTEGER :: i, k, z, type, jatom
+    CHARACTER(LEN=10) :: ctmp
+
+
+    DO z=1, ntoread
+        CALL Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol(:,:,:,:,z))
+    END DO ! z -> end read_traj
+    CLOSE(11)
+
+END SUBROUTINE Read_Trajectory
+
+SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol)
+! ************************************************************************************
+! This subroutine reads a frame from the trajectory file in the XYZ format
+! In:
+!  -nmoltypes: number of molecule types
+!  -nmols: array of number of molecules of each type
+!  -natoms: array of number of atoms of each type
+!  -which_is_wat: index of the water molecule type
+!  -L: box length
+! Out:
+!  -rO: array of oxygen positions
+!  -r1: array of hydrogen 1 positions
+!  -r2: array of hydrogen 2 positions
+!  -rmol: array of all the other atoms positions
+! ************************************************************************************
+
+    IMPLICIT NONE
+
+    INTEGER, INTENT(IN) :: unit
+    INTEGER, INTENT(in) :: nmoltypes
+    INTEGER, DIMENSION(:), INTENT(IN) :: nmols, natoms
+    INTEGER :: which_is_wat
+    REAL, DIMENSION(3) :: L
+    REAL, DIMENSION(:,:,:), INTENT(INOUT) :: rO, r1, r2
+    REAL, DIMENSION(:,:,:,:,:), INTENT(OUT) :: rmol
+
+    INTEGER :: i, type
+    CHARACTER(LEN=10) :: ctmp
+
+    rO = 0.0; r1 = 0.0; r2 = 0.0
+    rmol = 0.0
+
+    DO i=1,2
+        READ(unit,*) 
+    END DO
+
+    DO type=1, nmoltypes
+        IF (type == which_is_wat) THEN
+            DO i=1, nmols(type)
+                ! Reading rule for water
+                read(unit,*) ctmp, (rO(i,k), k=1,3)
+                read(unit,*) ctmp, (r1(i,k), k=1,3)
+                read(unit,*) ctmp, (r2(i,k), k=1,3)
+                ! Make the molecule whole
+                DO k=1, 3
+                    r1(i,k) = r1(i,k,z) - L(k)*anint((r1(i,k)-rO(i,k))/L(k))
+                    r2(i,k) = r2(i,k,z) - L(k)*anint((r2(i,k)-rO(i,k))/L(k))
+                ENDDO ! k
+            ENDDO ! i
+        ELSE ! (type == which_is_wat)
+            ! Reading rule for not water
+            DO i=1, nmols(type)
+                DO jatom=1, natoms(type)
+                    read(unit,*) ctmp, (rmol(type,i,jatom,k), k=1,3)
+                    ! Make the molecule whole
+                    IF (jatom > 1) THEN
+                        DO k=1, 3
+                            rmol(type,i,jatom,k,z) = rmol(type,i,jatom,k) &
+                            & - L(k)*anint((rmol(type,i,jatom,k)-rmol(type,i,1,k))/L(k))
+                        ENDDO ! k
+                    END IF ! (jatom > 1)
+                END DO !jatom
+            ENDDO ! i
+        END IF ! type == which_is_wat
+    END DO ! type
+END SUBROUTINE
