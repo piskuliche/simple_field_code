@@ -187,7 +187,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     DO chunk=1, num_chunks
         rO = 0.0; r1 = 0.0; r2 = 0.0; rmol = 0.0
         DO z=1, maxconfig
-            IF (chunk*maxconfig + z > nconfig) then
+            IF ((chunk-1)*maxconfig + z > nconfig) then
                 EXIT
             ENDIF
             CALL Read_XYZ_Frame(12, nmoltypes, nmols, natoms, which_is_wat, L, rO(:,:,z), r1(:,:,z), r2(:,:,z), rmol(:,:,:,:,z))
