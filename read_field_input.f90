@@ -224,8 +224,6 @@ SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r
     INTEGER :: i, type, jatom,k
     CHARACTER(LEN=10) :: ctmp
 
-    rO = 0.0; r1 = 0.0; r2 = 0.0
-    rmol = 0.0
 
     DO i=1,2
         READ(unit,*) 
