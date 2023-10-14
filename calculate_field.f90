@@ -185,6 +185,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     eOH1 = 0.0; eOH2 = 0.0
 
     DO chunk=1, num_chunks
+        WRITE(*,*) "Starting CHUNK ", chunk, "of ", num_chunks
         rO = 0.0; r1 = 0.0; r2 = 0.0; rmol = 0.0
         DO z=1, maxconfig
             IF ((chunk-1)*maxconfig + z > nconfig) then
@@ -203,8 +204,6 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
             IF (iconfig > nconfig) THEN
                 EXIT
             ENDIF
-            WRITE(*,*) "iconfig = ", iconfig
-            WRITE(*,*) "z = ", z
             ! Loop over the water molecules to get the electric field
             DO ival=1, nsamples
                 imol = samples(ival)
@@ -215,7 +214,6 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
                 ! Get the OH vectors for the water molecule
                 CALL OH_Vector(r1(imol,:,z), rO(imol,:,z), eOH1(imol,:,iconfig))
                 CALL OH_Vector(r2(imol,:,z), rO(imol,:,z), eOH2(imol,:,iconfig))
-                WRITE(*,*) "eOH1 = ", eOH1(imol,:,iconfig)
 
                 ! Calculate the field contribution...
                 DO type=1, nmoltypes
