@@ -39,7 +39,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
     num_chunks = ceiling(real(nconfig)/ real(maxconfig))
 
-    DO chunk=1, nchunk
+    DO chunk=1, num_chunks
         DO z=1, maxconfig
             IF (chunk*maxconfig + z > nconfig) then
                 EXIT
@@ -194,7 +194,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
 
     num_chunks = ceiling(real(nconfig)/ real(maxconfig))
 
-    DO chunk=1, nchunk
+    DO chunk=1, num_chunks
         DO z=1, maxconfig
             IF (chunk*maxconfig + z > nconfig) then
                 EXIT
