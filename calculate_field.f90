@@ -210,7 +210,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
         !$OMP SHARED( rO, r1, r2, rmol, charges), & 
         !$OMP SHARED(eOH1, eOH2), &
         !$OMP SHARED(dot1, dot2)
-        DO z=1, nconfig
+        DO z=1, maxconfig
             iconfig = chunk*maxconfig + z
             ! Loop over the water molecules to get the electric field
             DO ival=1, nsamples
