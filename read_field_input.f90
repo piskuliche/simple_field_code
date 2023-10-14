@@ -218,10 +218,10 @@ SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r
     INTEGER, DIMENSION(:), INTENT(IN) :: nmols, natoms
     INTEGER :: which_is_wat
     REAL, DIMENSION(3) :: L
-    REAL, DIMENSION(:,:,:), INTENT(INOUT) :: rO, r1, r2
+    REAL, DIMENSION(:,:), INTENT(INOUT) :: rO, r1, r2
     REAL, DIMENSION(:,:,:,:,:), INTENT(OUT) :: rmol
 
-    INTEGER :: i, type
+    INTEGER :: i, type, jatom,k
     CHARACTER(LEN=10) :: ctmp
 
     rO = 0.0; r1 = 0.0; r2 = 0.0
@@ -240,8 +240,8 @@ SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r
                 read(unit,*) ctmp, (r2(i,k), k=1,3)
                 ! Make the molecule whole
                 DO k=1, 3
-                    r1(i,k) = r1(i,k,z) - L(k)*anint((r1(i,k)-rO(i,k))/L(k))
-                    r2(i,k) = r2(i,k,z) - L(k)*anint((r2(i,k)-rO(i,k))/L(k))
+                    r1(i,k) = r1(i,k) - L(k)*anint((r1(i,k)-rO(i,k))/L(k))
+                    r2(i,k) = r2(i,k) - L(k)*anint((r2(i,k)-rO(i,k))/L(k))
                 ENDDO ! k
             ENDDO ! i
         ELSE ! (type == which_is_wat)
