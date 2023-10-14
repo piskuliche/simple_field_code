@@ -215,6 +215,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
                 ! Get the OH vectors for the water molecule
                 CALL OH_Vector(r1(imol,:,z), rO(imol,:,z), eOH1(imol,:,iconfig))
                 CALL OH_Vector(r2(imol,:,z), rO(imol,:,z), eOH2(imol,:,iconfig))
+                WRITE(*,*) "eOH1 = ", eOH1(imol,:,iconfig)
 
                 ! Calculate the field contribution...
                 DO type=1, nmoltypes
