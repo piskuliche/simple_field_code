@@ -2,6 +2,8 @@ PROGRAM Field
     use field_module
     IMPLICIT None
 
+    INTEGER, PARAMETER :: maxconfig = 100
+
     ! Variables
     INTEGER :: i, imol, z            ! Loop index
 
@@ -59,15 +61,15 @@ PROGRAM Field
     DO i = 1, nmoltypes
         WRITE(*,*) "There are ", nmols(i), " molecules of type ", molnames(i)
         IF (i .eq. which_is_wat) THEN
-            ALLOCATE(rO(nmols(i), 3, nconfig))
-            ALLOCATE(r1(nmols(i), 3, nconfig))
-            ALLOCATE(r2(nmols(i), 3, nconfig))
+            ALLOCATE(rO(nmols(i), 3, maxconfig))
+            ALLOCATE(r1(nmols(i), 3, maxconfig))
+            ALLOCATE(r2(nmols(i), 3, maxconfig))
         ELSE
             max_mol = MAX(max_mol, nmols(i))
             max_natom = MAX(max_natom, natoms(i))
         END IF
     END DO
-    ALLOCATE(rmol(nmoltypes, max_mol, max_natom, 3, nconfig))
+    ALLOCATE(rmol(nmoltypes, max_mol, max_natom, 3, maxconfig))
     ! Zero trajectory arrays
     rO=0d0; r1=0d0; r2=0d0; rmol=0d0
 
@@ -87,16 +89,16 @@ PROGRAM Field
     CALL cpu_time(tmp2)
     WRITE(6,'(A,F10.2,A)') ' Setup time = ',tmp2-tmp1,' s'
 
-! II. Trajectory Reading ******************************************************
-    CALL cpu_time(tmp1)
+! II. Open Trajectory ******************************************************
+    !CALL cpu_time(tmp1)
 
     ! Opens the trajectory file and reads the coordinates of the molecules
     ! It also makes the molecules whole along the way.
-    Call Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol) 
-
-    CALL cpu_time(tmp2)
-    WRITE(6,'(A,F10.2,A)') ' Read time = ',tmp2-tmp1,' s'
-    CALL flush(6)
+    !Call Read_Trajectory(nconfig, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol) 
+    OPEN(12, FILE='traj.xyz', STATUS='OLD', ACTION='READ')
+    !CALL cpu_time(tmp2)
+    !WRITE(6,'(A,F10.2,A)') ' Read time = ',tmp2-tmp1,' s'
+    !CALL flush(6)
 
 ! III. Field Calculation *******************************************************
 
@@ -131,6 +133,7 @@ PROGRAM Field
 
 
 ! V. Deallocate ***************************************************************
+    CLOSE(12) ! Close the trajectory
 
     DEALLOCATE(rO, r1, r2, rmol)
     DEALLOCATE(dot1, dot2, eOH1, eOH2)
