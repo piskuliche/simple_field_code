@@ -193,7 +193,7 @@ SUBROUTINE Read_Trajectory_Frames(unit, ntoread, nmoltypes, nmols, natoms, which
     END DO ! z -> end read_traj
     CLOSE(11)
 
-END SUBROUTINE Read_Trajectory
+END SUBROUTINE Read_Trajectory_Frames
 
 SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r1, r2, rmol)
 ! ************************************************************************************
@@ -260,4 +260,4 @@ SUBROUTINE Read_XYZ_Frame(unit, nmoltypes, nmols, natoms, which_is_wat, L, rO, r
             ENDDO ! i
         END IF ! type == which_is_wat
     END DO ! type
-END SUBROUTINE
+END SUBROUTINE Read_XYZ_Frame
