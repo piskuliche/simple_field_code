@@ -1,7 +1,7 @@
 
 
 SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
-                    & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+                    & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2, z0)
     USE ieee_arithmetic, ONLY: ieee_is_finite
     
     IMPLICIT NONE
@@ -19,6 +19,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
     REAL, DIMENSION(:,:) :: dot1, dot2
     REAL, DIMENSION(:,:,:) :: eOH1, eOH2
+    REAL, DIMENSION(:,:) :: z0
     REAL, DIMENSION(3) :: ef1_tmp, ef2_tmp
 
     !REAL, DIMENSION(nmols(which_is_wat),3,nconfig) :: efield1, efield2
@@ -39,6 +40,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
     num_chunks = ceiling(real(nconfig)/ real(maxconfig))
     eOH1 = 0.0; eOH2 = 0.0
+    z0 = 0.0
 
     DO chunk=1, num_chunks
         rO = 0.0; r1 = 0.0; r2 = 0.0; rmol = 0.0
@@ -58,6 +60,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
             iconfig = (chunk-1)*maxconfig + z
             ! Loop over the water molecules to get the electric field
             DO imol=1, nmols(which_is_wat)
+
                 ! Zero the eoh
                 ef1_tmp = 0.0; ef2_tmp = 0.0
 
@@ -135,6 +138,8 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 
                 dot1(imol,iconfig) = Dot_Product(eOH1(imol,:,iconfig), ef1_tmp(:))
                 dot2(imol,iconfig) = Dot_Product(eOH2(imol,:,iconfig), ef2_tmp(:))
+                ! Set the value of z0
+                z0(imol, iconfig) = rO(imol,3, z)
 
             ENDDO !imol
         ENDDO ! z
@@ -143,7 +148,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
 END SUBROUTINE Get_Field
 
 SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, samples, &
-                    & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+                    & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2, z0)
     IMPLICIT NONE
 
     INTEGER, PARAMETER :: maxconfig = 100
@@ -160,6 +165,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
     ! Output variables
 
     REAL, DIMENSION(:,:) :: dot1, dot2
+    REAL, DIMENSION(:,:) :: z0
     REAL, DIMENSION(:,:,:) :: eOH1, eOH2
     REAL, DIMENSION(3) :: ef1_tmp, ef2_tmp
 
@@ -183,6 +189,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
 
     num_chunks = ceiling(real(nconfig)/ real(maxconfig))
     eOH1 = 0.0; eOH2 = 0.0
+    z0 = 0.0
 
     DO chunk=1, num_chunks
         WRITE(*,*) "Starting CHUNK ", chunk, "of ", num_chunks
@@ -286,6 +293,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
 
                 dot1(imol,iconfig) = Dot_Product(eOH1(imol,:,iconfig), ef1_tmp(:))
                 dot2(imol,iconfig) = Dot_Product(eOH2(imol,:,iconfig), ef2_tmp(:))
+                z0(imol,inconfig) = rO(imol,3, z)
 
             ENDDO !imol
         ENDDO ! z
