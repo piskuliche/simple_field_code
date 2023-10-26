@@ -293,7 +293,7 @@ SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rm
 
                 dot1(imol,iconfig) = Dot_Product(eOH1(imol,:,iconfig), ef1_tmp(:))
                 dot2(imol,iconfig) = Dot_Product(eOH2(imol,:,iconfig), ef2_tmp(:))
-                z0(imol,inconfig) = rO(imol,3, z)
+                z0(imol,iconfig) = rO(imol,3, z)
 
             ENDDO !imol
         ENDDO ! z
