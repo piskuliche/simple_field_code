@@ -30,6 +30,7 @@ PROGRAM Field
     ! Field Variables
     REAL, ALLOCATABLE, DIMENSION(:,:) :: dot1, dot2
     REAL, ALLOCATABLE, DIMENSION(:,:,:) :: eOH1, eOH2
+    REAL, ALLOCATABLE, DIMENSION(:,:) :: z0_1, z0_2
 
     ! Openmp
     INTEGER :: max_omp_threads, threadno
@@ -78,6 +79,8 @@ PROGRAM Field
     ALLOCATE(dot2(nmols(which_is_wat),nconfig))
     ALLOCATE(eOH1(nmols(which_is_wat),3,nconfig))
     ALLOCATE(eOH2(nmols(which_is_wat),3,nconfig))
+    ALLOCATE(z0_1(nmols(which_is_wat),nconfig))
+    ALLOCATE(z0_2(nmols(which_is_wat),nconfig))
     dot1=0d0; dot2=0d0; eOH1=0d0; eOH2=0d0
 
     WRITE(*,*) "wat", nmols(which_is_wat)
@@ -109,10 +112,10 @@ PROGRAM Field
     ! Check if using sampling or not. Eventually just build samples to be its own array.
     IF (nsamples > 0) THEN
         Call Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, samples, &
-            & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+            & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2, z0_1, z0_2)
     ELSE
         Call Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
-            & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2)
+            & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2, z0_1, z0_2)
     END IF
 
     write(*,*) dot1(1,1),"t"
@@ -126,9 +129,9 @@ PROGRAM Field
     WRITE(6,*) ' nwat = ', nmols(which_is_wat)
     write(*,*) dot1(1,1),"t"
     IF (nsamples > 0) THEN
-        CALL WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig, nsamples, samples)
+        CALL WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, z0_1, z0_2, nmols(which_is_wat), nconfig, nsamples, samples)
     ELSE
-        CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmols(which_is_wat), nconfig)
+        CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, z0_1, z0_2 nmols(which_is_wat), nconfig)
     ENDIF 
 
 
@@ -136,7 +139,7 @@ PROGRAM Field
     CLOSE(12) ! Close the trajectory
 
     DEALLOCATE(rO, r1, r2, rmol)
-    DEALLOCATE(dot1, dot2, eOH1, eOH2)
+    DEALLOCATE(dot1, dot2, eOH1, eOH2, z01_, z0_2)
 
     !CALL Close_Field_Files(nmols(which_is_wat))
     
