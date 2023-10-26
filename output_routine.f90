@@ -1,4 +1,4 @@
-SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmol, nconfig)
+SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, z0, nmol, nconfig)
 
     USE HDF5
 
