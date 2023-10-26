@@ -5,6 +5,7 @@ SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmol, nconfig)
     IMPLICIT NONE
 
     REAL, DIMENSION(:,:), INTENT(IN) :: dot1, dot2   ! Dimensions(imol, iconfig)
+    REAL, DIMENSION(:,:), INTENT(IN) :: z0 ! Dimensions(imol, iconfig)
     REAL, DIMENSION(:,:,:), INTENT(IN) :: eoh1, eoh2 ! Dimensions(imol, idim, iconfig)
     INTEGER, INTENT(IN) :: nmol, nconfig
 
@@ -40,6 +41,14 @@ SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmol, nconfig)
         CALL h5dclose_f(dataset_id, ERROR_FLAG)
         CALL h5sclose_f(dataspace_id, ERROR_FLAG)
 
+        !   z0 value
+        CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
+        WRITE(dataset_name, '(A, I0)') "z0_", (i-1)*2+1
+        CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+        CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, z0(i,:), dot_dims, ERROR_FLAG)
+        CALL h5dclose_f(dataset_id, ERROR_FLAG)
+        CALL h5sclose_f(dataspace_id, ERROR_FLAG)
+
         !   eoh value
         CALL h5screate_simple_f(2, eoh_dims, dataspace_id, ERROR_FLAG)
         WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+1
@@ -56,6 +65,15 @@ SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmol, nconfig)
         WRITE(dataset_name, '(A, I0)') "dot_", (i-1)*2+2
         CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
         CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, dot2(i,:), dot_dims, ERROR_FLAG)
+
+        CALL h5dclose_f(dataset_id, ERROR_FLAG)
+        CALL h5sclose_f(dataspace_id, ERROR_FLAG)
+
+        !   z0 value
+        CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
+        WRITE(dataset_name, '(A, I0)') "z0_", (i-1)*2+2
+        CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+        CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, z0(i,:), dot_dims, ERROR_FLAG)
 
         CALL h5dclose_f(dataset_id, ERROR_FLAG)
         CALL h5sclose_f(dataspace_id, ERROR_FLAG)
@@ -79,13 +97,14 @@ SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, nmol, nconfig)
 END SUBROUTINE WRITE_HD5F
 
 
-SUBROUTINE WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, nmol, nconfig, nsamples, samples)
+SUBROUTINE WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, z0, nmol, nconfig, nsamples, samples)
 
     USE HDF5
 
     IMPLICIT NONE
 
     REAL, DIMENSION(:,:), INTENT(IN) :: dot1, dot2   ! Dimensions(imol, iconfig)
+    REAL, DIMENSION(:,:), INTENT(IN) :: z0
     REAL, DIMENSION(:,:,:), INTENT(IN) :: eoh1, eoh2 ! Dimensions(imol, idim, iconfig)
     INTEGER, INTENT(IN) :: nmol, nconfig
     INTEGER, INTENT(IN) :: nsamples
@@ -124,6 +143,14 @@ SUBROUTINE WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, nmol, nconfig, nsamples, s
         CALL h5dclose_f(dataset_id, ERROR_FLAG)
         CALL h5sclose_f(dataspace_id, ERROR_FLAG)
 
+        !   dot product value
+        CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
+        WRITE(dataset_name, '(A, I0)') "z0_", (i-1)*2+1
+        CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+        CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, z0(ival,:), dot_dims, ERROR_FLAG)
+        CALL h5dclose_f(dataset_id, ERROR_FLAG)
+        CALL h5sclose_f(dataspace_id, ERROR_FLAG)
+
         !   eoh value
         CALL h5screate_simple_f(2, eoh_dims, dataspace_id, ERROR_FLAG)
         WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+1
@@ -143,6 +170,16 @@ SUBROUTINE WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, nmol, nconfig, nsamples, s
 
         CALL h5dclose_f(dataset_id, ERROR_FLAG)
         CALL h5sclose_f(dataspace_id, ERROR_FLAG)
+
+        !   z0 value
+        CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
+        WRITE(dataset_name, '(A, I0)') "z0_", (i-1)*2+2
+        CALL h5dcreate_f(file_id, trim(dataset_name), H5T_NATIVE_REAL, dataspace_id, dataset_id, ERROR_FLAG)
+        CALL h5dwrite_f(dataset_id, H5T_NATIVE_REAL, z0(ival,:), dot_dims, ERROR_FLAG)
+
+        CALL h5dclose_f(dataset_id, ERROR_FLAG)
+        CALL h5sclose_f(dataspace_id, ERROR_FLAG)
+
         !   eoh value
         CALL h5screate_simple_f(2, eoh_dims, dataspace_id, ERROR_FLAG)
         WRITE(dataset_name, '(A, I0)') "eoh_", (i-1)*2+2
