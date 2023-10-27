@@ -43,6 +43,7 @@ SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
     z0 = 0.0
 
     DO chunk=1, num_chunks
+        WRITE(*,*) "Starting CHUNK ", chunk, "of ", num_chunks
         rO = 0.0; r1 = 0.0; r2 = 0.0; rmol = 0.0
         DO z=1, maxconfig
             IF ((chunk-1)*maxconfig + z > nconfig) then
