@@ -1,4 +1,33 @@
 SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, z0, nmol, nconfig)
+! **********************************************************************************************************************
+! This subroutine writes the HDF5 file, for all of the OHs
+! 
+! The hierarchy of the HDF5 file is as follows:
+!   Here: a, b are indices for the first and second OHs of a particular molecule.
+!
+!  file: field.h5
+!    - dot_a: dot product values for OH1
+!    - dot_b: dot product values for OH2
+!    - eoh_a: OH vector values for OH1
+!    - eoh_b: OH vector values for OH2
+!    - z0_a: z0 values for OH1
+!    - z0_b: z0 values for OH2
+! 
+! Input:
+!   - dot1, dot2: Dot product arrays (nmol, ntimes)
+!   - eoh1, eoh2: OH vector arrays (nmol, ntimes, 3)
+!   - z0: z-coordinate values (for sfg) (nmol, ntimes)
+!   - nmol: number of molecules
+!   - nconfig: number of configurations
+! 
+! Output:
+!   - HDF5 file (field.h5): Contains dot products, OH vectors, and z0 values for each OH
+!
+! TODO:
+!   1) Could maybe combine this with WRITE_HD5F_Samples by always having it write a set number of samples
+!   
+! **********************************************************************************************************************
+
 
     USE HDF5
 
@@ -32,6 +61,15 @@ SUBROUTINE WRITE_HD5F(dot1, dot2, eoh1, eoh2, z0, nmol, nconfig)
 
     ! Loop over water
     DO i=1, nmol
+        ! *** HDF5 NOTE *** !
+        ! * Because HDF5 is not super self-explanatory, it should be noted that the way this works
+        ! * is to open the library, create the file (pre-do loop)
+        ! * then create the dataspace, dataset, and write to it.
+        ! * Then you close the dataspace and dataset. Then you repeat for the next dataset.
+        ! * Then you close the file, and the library (post do loop)
+        ! * So inside the loop, each dataset has 5 calls to the HDF5 library
+        ! *** END HDF5 NOTE *** !
+        
         ! Write first OH
         !   dot product value
         CALL h5screate_simple_f(1, dot_dims, dataspace_id, ERROR_FLAG)
@@ -98,6 +136,36 @@ END SUBROUTINE WRITE_HD5F
 
 
 SUBROUTINE WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, z0, nmol, nconfig, nsamples, samples)
+! **********************************************************************************************************************
+! This subroutine writes the HDF5 file, for a set number of OHs
+! 
+! The hierarchy of the HDF5 file is as follows:
+!   Here: a, b are indices for the first and second OHs of a particular molecule.
+!
+!  file: field.h5
+!    - dot_a: dot product values for OH1
+!    - dot_b: dot product values for OH2
+!    - eoh_a: OH vector values for OH1
+!    - eoh_b: OH vector values for OH2
+!    - z0_a: z0 values for OH1
+!    - z0_b: z0 values for OH2
+! 
+! Input:
+!   - dot1, dot2: Dot product arrays (nsamples, ntimes)
+!   - eoh1, eoh2: OH vector arrays (nsamples, ntimes, 3)
+!   - z0: z-coordinate values (for sfg) (nsamples, ntimes)
+!   - nmol: number of molecules
+!   - nconfig: number of configurations
+!   - nsamples: number of samples to write
+!   - samples: array of samples to write (nsamples)
+! 
+! Output:
+!   - HDF5 file (field.h5): Contains dot products, OH vectors, and z0 values for each OH
+!
+! TODO:
+!   1) Could maybe combine this with WRITE_HD5F by always having it write a set number of samples
+!   
+! **********************************************************************************************************************
 
     USE HDF5
 
@@ -133,6 +201,15 @@ SUBROUTINE WRITE_HD5F_Samples(dot1, dot2, eoh1, eoh2, z0, nmol, nconfig, nsample
 
     ! Loop over water
     DO i=1, nsamples
+        ! *** HDF5 NOTE *** !
+        ! * Because HDF5 is not super self-explanatory, it should be noted that the way this works
+        ! * is to open the library, create the file (pre-do loop)
+        ! * then create the dataspace, dataset, and write to it.
+        ! * Then you close the dataspace and dataset. Then you repeat for the next dataset.
+        ! * Then you close the file, and the library (post do loop)
+        ! * So inside the loop, each dataset has 5 calls to the HDF5 library
+        ! *** END HDF5 NOTE *** !
+
         ival = samples(i)
         ! Write first OH
         !   dot product value
