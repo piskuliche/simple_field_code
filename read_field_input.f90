@@ -1,4 +1,26 @@
 SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax, L, which_is_water, nsamples)
+! ************************************************************************************
+! This subroutine reads the input file for the field calculation.
+! 
+! It also reads the molecular input files for each molecule type.
+!
+! Input:
+!   None
+!
+! Output:
+!  -nconfig: number of configurations
+!  -nmoltypes: number of molecule types
+!  -molnames: array of molecule names
+!  -nmols: array of number of molecules of each type
+!  -natoms: array of number of atoms of each type
+!  -charges: array of charges of each atom
+!  -rmax: cutoff radius
+!  -L: box length
+!  -which_is_water: index of the water molecule type
+!  -nsamples: number of samples
+!
+! ************************************************************************************
+
     IMPLICIT NONE
 
     ! Output Variables
@@ -44,6 +66,17 @@ SUBROUTINE Read_Input(nconfig, nmoltypes, molnames, nmols, natoms, charges, rmax
 END SUBROUTINE Read_Input
 
 SUBROUTINE Read_Molecule(imol, molname, q, natoms)
+! ************************************************************************************
+! This subroutine reads the input file for a molecule
+!
+! Input:
+!  -imol: index of the molecule
+!  -molname: name of the molecule
+!
+! Output:
+!  -q: array of charges of each atom
+!  -natoms: number of atoms
+! ************************************************************************************
     IMPLICIT NONE
 
     CHARACTER(LEN=10), INTENT(IN) :: molname

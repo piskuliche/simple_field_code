@@ -1,7 +1,44 @@
-
-
 SUBROUTINE Get_Field(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, &
                     & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2, z0)
+! *********************************************************************
+! This subroutine calculates the electric field for every OH in the system
+!
+! This works by calculating the field using the folowing formula:
+!   E = sum_i q_i (r_i - r_0) / |r_i - r_0|^3
+! where q_i is the charge of the atom, r_i is the position of the atom,
+! and r_0 is the position of the OH bond.
+! 
+! This happens within a cutoff radius rmax.
+! 
+! Inputs:
+!   - nconfig: Number of configurations
+!   - nmoltypes: Number of molecule types
+!   - nmols: Number of molecules of each type
+!   - natoms: Number of atoms of each type
+!   - which_is_wat: Which molecule type is water
+!   - rmax: Cutoff distance for the field
+!   - L: Box size
+!   - rO: Coordinates of the oxygen atoms
+!   - r1: Coordinates of the H1 atoms
+!   - r2: Coordinates of the H2 atoms
+!   - rmol: Coordinates of all the atoms
+!   - charges: Charges of all the atoms
+!
+! Outputs:
+!   - dot1: Dot product of the electric field with the OH1 vector
+!   - dot2: Dot product of the electric field with the OH2 vector
+!   - eOH1: OH1 vector
+!   - eOH2: OH2 vector
+!   - z0: z coordinate of the oxygen atom
+!
+! TODO:
+!   1) Remove this subroutine, and replace it with the samples code with
+!       ALL the molecules as samples. This will make the code more consistent
+!       and easier to read. It will also reduce # lines, and make it easier
+!       to add new features.   
+!
+! *********************************************************************
+
     USE ieee_arithmetic, ONLY: ieee_is_finite
     
     IMPLICIT NONE
@@ -150,6 +187,40 @@ END SUBROUTINE Get_Field
 
 SUBROUTINE Get_Field_Samples(nconfig, nmoltypes, nmols, natoms, which_is_wat, rmax, L, samples, &
                     & rO, r1, r2, rmol, charges, dot1, dot2, eOH1, eOH2, z0)
+! *********************************************************************
+! This subroutine calculates the electric field for a subset of OHS in the system
+!
+! This works by calculating the field using the folowing formula:
+!   E = sum_i q_i (r_i - r_0) / |r_i - r_0|^3
+! where q_i is the charge of the atom, r_i is the position of the atom,
+! and r_0 is the position of the OH bond.
+! 
+! This happens within a cutoff radius rmax.
+! 
+! Inputs:
+!   - nconfig: Number of configurations
+!   - nmoltypes: Number of molecule types
+!   - nmols: Number of molecules of each type
+!   - natoms: Number of atoms of each type
+!   - which_is_wat: Which molecule type is water
+!   - rmax: Cutoff distance for the field
+!   - L: Box size
+!   - samples: Which molecules to calculate the field for
+!   - rO: Coordinates of the oxygen atoms
+!   - r1: Coordinates of the H1 atoms
+!   - r2: Coordinates of the H2 atoms
+!   - rmol: Coordinates of all the atoms
+!   - charges: Charges of all the atoms
+!
+! Outputs:
+!   - dot1: Dot product of the electric field with the OH1 vector
+!   - dot2: Dot product of the electric field with the OH2 vector
+!   - eOH1: OH1 vector
+!   - eOH2: OH2 vector
+!   - z0: z coordinate of the oxygen atom
+!
+! 
+! *********************************************************************
     IMPLICIT NONE
 
     INTEGER, PARAMETER :: maxconfig = 100
@@ -305,6 +376,17 @@ END SUBROUTINE Get_Field_Samples
 
 
 SUBROUTINE OH_Vector(ra, rb, eOH)
+! *********************************************************************
+! This subroutine calculates the OH vector, and normalizes it
+!
+! Inputs:
+!   - ra: Coordinates of the H atom
+!   - rb: Coordinates of the O atom
+!
+! Outputs:
+!   - eOH: OH vector
+!
+! *********************************************************************
 
     IMPLICIT NONE
 
@@ -329,6 +411,20 @@ SUBROUTINE OH_Vector(ra, rb, eOH)
 END SUBROUTINE OH_Vector
 
 SUBROUTINE PBC_Dist(ra, rb, L, dist, vector)
+! *********************************************************************
+! This subroutine calculates the distance between two points, taking
+! into account periodic boundary conditions
+!
+! Inputs:
+!   - ra: Coordinates of the first point
+!   - rb: Coordinates of the second point
+!   - L: Box size
+!
+! Outputs:
+!   - dist: Distance between the two points
+!   - vector: Vector pointing from the first point to the second
+!
+! *********************************************************************
 
     IMPLICIT NONE
 
@@ -349,6 +445,20 @@ SUBROUTINE PBC_Dist(ra, rb, L, dist, vector)
 END SUBROUTINE PBC_Dist
 
 SUBROUTINE Field_Contribution(q, ra, vector, dist, efield)
+! *********************************************************************
+! This subroutine calculates the contribution to the electric field
+! from a single atom
+!
+! Inputs:
+!   - q: Charge of the atom
+!   - ra: Coordinates of the atom
+!   - vector: Vector pointing from the atom to the OH bond
+!   - dist: Distance between the atom and the OH bond
+!
+! Outputs:
+!   - efield: Electric field contribution from the atom
+!
+! *********************************************************************
     
     IMPLICIT NONE
 
@@ -364,8 +474,25 @@ SUBROUTINE Field_Contribution(q, ra, vector, dist, efield)
 END SUBROUTINE
 
 SUBROUTINE All_Distances(na, nb, ra, rb, L, dist, dr_vec)
-    
+! *********************************************************************
+! This subroutine calculates the distance between all the atoms in two
+! different arrays
+! 
+! Inputs:
+!   - na: Number of atoms in the first set
+!   - nb: Number of atoms in the second set
+!   - ra: Coordinates of the first set
+!   - rb: Coordinates of the second set
+!  - L: Box size
+!
+! Outputs:
+!   - dist: Distance between all the atoms
+!   - dr_vec: Vector pointing from the first set to the second
+!
+! *********************************************************************
+
     IMPLICIT NONE
+    
     INTEGER, INTENT(IN) :: na, nb
     REAL, DIMENSION(na, 3), INTENT(IN) :: ra
     REAL, DIMENSION(nb, 3), INTENT(IN) :: rb

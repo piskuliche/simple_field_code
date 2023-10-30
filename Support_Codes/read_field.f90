@@ -1,4 +1,11 @@
 SUBROUTINE read_field(ioh)
+! *********************************************************************
+! Read the field from the hdf5 file - EXAMPLE only
+! 
+! This shows how to read a single array from the hdf5 file.
+! Note - for each ioh, the options of arrays are: dot_ioh, z0_ioh, and eOH_ioh
+!
+! *********************************************************************
     USE HDF5
 
     IMPLICIT NONE
