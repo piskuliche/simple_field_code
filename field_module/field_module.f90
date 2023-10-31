@@ -1,4 +1,9 @@
 MODULE field_module
+! *********************************************************************
+! This module contains the read_field_input.f90, calculate_field.f90,
+! and output_routine.f90 subroutines.
+! *********************************************************************
+
     IMPLICIT NONE
     
     CONTAINS
