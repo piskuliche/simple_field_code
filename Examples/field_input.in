@@ -1,0 +1,10 @@
+# Number of Molecule Types, Number of Frames, Which Molecule is Water
+2 2500 2
+# Rcutoff, Lx, Ly, Lz -> all in angstroms
+7.831 39.0023 39.0023 80.9630
+# Molecule names (1 entry/molecule)
+popc water
+# Number of molecules (1 entry/molecule)
+48 2144
+# Number of waters to be sampled (0->all)
+400
