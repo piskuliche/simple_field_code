@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(electric-field LANGUAGES Fortran)
-find_package(HDF5 REQUIRED COMPONENTS Fortran HL)
+find_package(HDF5 REQUIRED COMPONENTS Fortran)
+
+message(STATUS ${HDF5_Fortran_INCLUDE_DIRS})
 
 set(CMAKE_Fortran_FLAGS "-O3")
 
