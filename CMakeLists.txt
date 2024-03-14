@@ -10,6 +10,7 @@ set(CMAKE_Fortran_FLAGS "-O3")
 set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/modules)
 
 include(GNUInstallDirs)
+include_directories(${HDF5_INCLUDE_DIR})
 
 message(STATUS ${CMAKE_BINARY_DIR})
 
