@@ -103,7 +103,7 @@ PROGRAM Field
     !CALL flush(6)
 
 ! III. Field Calculation *******************************************************
-
+    OPEN(40, file='field_timing.dat')
     WRITE(6,*) ' Beginning field calc'
     CALL cpu_time(tmp1)
     CALL flush(6)
@@ -121,10 +121,11 @@ PROGRAM Field
     
     CALL cpu_time(tmp2)
     WRITE(6,'(A,F10.2,A)') ' Efield time = ',tmp2-tmp1,' s'
+    WRITE(40,*) ' Efield time = ',tmp2-tmp1,' s'
 
 
 ! IV. Write Data ************************************************************
-
+    CALL cpu_time(tmp1)
     WRITE(6,*) ' nwat = ', nmols(which_is_wat)
     write(*,*) dot1(1,1),"t"
     IF (nsamples > 0) THEN
@@ -132,6 +133,10 @@ PROGRAM Field
     ELSE
         CALL WRITE_HD5F(dot1, dot2, eoh1, eoh2, z0, nmols(which_is_wat), nconfig)
     ENDIF 
+    CALL cpu_time(tmp2)
+    WRITE(6,'(A,F10.2,A)') ' Write time = ',tmp2-tmp1,' s'
+    WRITE(40,*) ' Write time = ',tmp2-tmp1,' s'
+    CLOSE(40)
 
 
 ! V. Deallocate ***************************************************************
